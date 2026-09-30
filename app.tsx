@@ -1,0 +1,762 @@
+// bb-plugin-machine-sidebar — frontend entry.
+//
+// Replaces bb's sidebar thread list with a machine → project → thread tree.
+// Grouping lives in tree.ts; this file draws it and wires bb's actions.
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent, ReactNode } from "react";
+import {
+  definePluginApp,
+  experimental_ProviderIcon as ProviderIcon,
+  experimental_usePluginId,
+  experimental_useProviders,
+  experimental_useSidebarThreadActions,
+  experimental_useSidebarThreads,
+  ThreadTitle,
+  useSidebarThreadDraft,
+  useSidebarThreadShortcut,
+  type PluginThreadListProps,
+} from "@get-bb/plugin-sdk/app";
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/utils";
+import { useInactiveMarks, type SetInactive } from "./inactive";
+import TagSettings from "./settings";
+import { TagColorProvider, useTagColor } from "./tag-rules";
+import { parseTitleTags } from "./tags";
+import {
+  buildTree,
+  NO_INACTIVE_MARKS,
+  type InactiveMarks,
+  type MachineGroup,
+  type ProjectGroup,
+  type Row,
+} from "./tree";
+
+type SidebarThread = ReturnType<typeof experimental_useSidebarThreads>["threads"][number];
+type Actions = ReturnType<typeof experimental_useSidebarThreadActions>;
+
+// ---------------------------------------------------------------- inactive marks
+
+const InactiveContext = createContext<{ marks: InactiveMarks; setInactive: SetInactive }>({
+  marks: NO_INACTIVE_MARKS,
+  setInactive: () => undefined,
+});
+
+/** Only a thread waiting for the user's input pulls it out of "Inactive" by itself;
+ * finished and failed turns wake it through `latestAttentionAt` (see tree.ts). */
+const isWaitingForUser = (thread: SidebarThread) =>
+  thread.hasPendingInteraction || thread.indicator === "waiting-for-input";
+
+// ---------------------------------------------------------------- collapse state
+
+function useCollapsed() {
+  const pluginId = experimental_usePluginId();
+  const storageKey = `${pluginId}.collapsed`;
+  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => {
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
+      return new Set(Array.isArray(saved) ? saved.filter((key) => typeof key === "string") : []);
+    } catch {
+      return new Set();
+    }
+  });
+  const toggle = useCallback(
+    (key: string) => {
+      setCollapsed((current) => {
+        const next = new Set(current);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify([...next]));
+        } catch {
+          // Storage full or unavailable: keep the in-memory state.
+        }
+        return next;
+      });
+    },
+    [storageKey],
+  );
+  return { collapsed, toggle };
+}
+
+// ---------------------------------------------------------------- status
+
+type Attention = "waiting" | "failed" | "done" | null;
+
+const BUSY = new Set([
+  "runtime",
+  "workflow",
+  "background-agent",
+  "background-command",
+  "working-draft",
+  "goal",
+  "plan-mode",
+]);
+
+function attentionOf(thread: SidebarThread): Attention {
+  if (thread.hasPendingInteraction || thread.indicator === "waiting-for-input") return "waiting";
+  if (thread.indicator === "unread-error" || thread.indicator === "queued-failed") return "failed";
+  if (thread.indicator === "unread-success") return "done";
+  return null;
+}
+
+const ATTENTION_DOT: Record<Exclude<Attention, null>, string> = {
+  waiting: "bg-attention",
+  failed: "bg-destructive",
+  done: "bg-success",
+};
+
+/** The most urgent attention among rows, for collapsed group headers. */
+function rollup(rows: readonly Row<SidebarThread>[]): Attention {
+  const kinds = rows.map((row) => attentionOf(row.thread));
+  return kinds.includes("waiting")
+    ? "waiting"
+    : kinds.includes("failed")
+      ? "failed"
+      : kinds.includes("done")
+        ? "done"
+        : null;
+}
+
+function Dot({ kind, label }: { kind: Exclude<Attention, null>; label?: string }) {
+  return (
+    <span
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
+      className={cn("size-2 shrink-0 animate-pulse rounded-full", ATTENTION_DOT[kind])}
+    />
+  );
+}
+
+function Spinner({ label }: { label: string }) {
+  return (
+    <span
+      role="img"
+      aria-label={label}
+      className="size-3 shrink-0 animate-spin rounded-full border-[1.5px] border-muted-foreground/30 border-t-muted-foreground"
+    />
+  );
+}
+
+function StatusGlyph({ thread }: { thread: SidebarThread }) {
+  const { hasUnsubmittedDraft } = useSidebarThreadDraft(thread.id);
+  const attention = attentionOf(thread);
+  const label = thread.indicatorLabel ?? undefined;
+  if (attention !== null) return <Dot kind={attention} label={label ?? attention} />;
+  if (BUSY.has(thread.indicator)) return <Spinner label={label ?? "Working"} />;
+  if (thread.indicator === "queued-waiting") {
+    return <Icon name="Clock" fallback="Dot" className="size-3 shrink-0 text-muted-foreground" />;
+  }
+  if (hasUnsubmittedDraft) {
+    return (
+      <Icon name="Pencil" fallback="EditFile" className="size-3 shrink-0 text-muted-foreground" />
+    );
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------- row menu
+
+interface MenuItem {
+  label: string;
+  run: () => void;
+  destructive?: boolean;
+}
+
+function RowMenu({ items }: { items: MenuItem[] }) {
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (position === null) return;
+    const close = (event: Event) => {
+      if (menuRef.current?.contains(event.target as Node)) return;
+      setPosition(null);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPosition(null);
+    };
+    document.addEventListener("pointerdown", close, true);
+    document.addEventListener("keydown", onKey, true);
+    window.addEventListener("blur", close);
+    return () => {
+      document.removeEventListener("pointerdown", close, true);
+      document.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("blur", close);
+    };
+  }, [position]);
+
+  const open = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    setPosition({ top: rect.bottom + 4, left: Math.max(8, rect.right - 180) });
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Thread actions"
+        aria-haspopup="menu"
+        onClick={open}
+        className={cn(
+          "flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground",
+          position === null && "opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100",
+        )}
+      >
+        <Icon name="MoreHorizontal" fallback="Dot" className="size-3.5" />
+      </button>
+      {position !== null && (
+        <div
+          ref={menuRef}
+          role="menu"
+          style={{ position: "fixed", top: position.top, left: position.left, zIndex: 60 }}
+          className="w-[180px] rounded-md border border-border bg-popover p-1 text-sm text-popover-foreground shadow-lg"
+        >
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              role="menuitem"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setPosition(null);
+                item.run();
+              }}
+              className={cn(
+                "flex w-full items-center rounded px-2 py-1.5 text-left hover:bg-accent",
+                item.destructive && "text-destructive-text",
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---------------------------------------------------------------- thread row
+
+function RenameInput({
+  initial,
+  onDone,
+}: {
+  initial: string;
+  onDone: (title: string | null) => void;
+}) {
+  const [value, setValue] = useState(initial);
+  const finish = (title: string | null) => onDone(title?.trim() ? title.trim() : null);
+  return (
+    <input
+      autoFocus
+      value={value}
+      aria-label="Thread title"
+      onChange={(event) => setValue(event.target.value)}
+      onFocus={(event) => event.target.select()}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+      onKeyDown={(event: ReactKeyboardEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        if (event.key === "Enter") finish(value);
+        if (event.key === "Escape") finish(null);
+      }}
+      onBlur={() => finish(value)}
+      className="min-w-0 flex-1 rounded bg-background px-1 text-sm text-foreground outline-none ring-1 ring-ring"
+    />
+  );
+}
+
+function ProviderGlyph({ providerId }: { providerId: string }) {
+  const { providers } = experimental_useProviders();
+  const provider = providers.find((entry) => entry.id === providerId) ?? { id: providerId };
+  return (
+    <ProviderIcon
+      providerKind="agent"
+      provider={provider}
+      aria-hidden
+      className="size-3.5 shrink-0"
+    />
+  );
+}
+
+/**
+ * The thread title with leading "[Tag]" prefixes drawn as colored pills.
+ * Titles without tags use bb's ThreadTitle, which also renders @mentions.
+ */
+function TitleLine({ thread }: { thread: SidebarThread }) {
+  const tagColor = useTagColor();
+  const { tags, rest } = parseTitleTags(thread.displayTitle);
+  if (tags.length === 0) {
+    return (
+      <span className="truncate">
+        <ThreadTitle threadId={thread.id} />
+      </span>
+    );
+  }
+  return (
+    <span className="flex min-w-0 items-center gap-1">
+      {tags.map((tag, index) => (
+        <span
+          key={`${index}:${tag}`}
+          style={{
+            color: tagColor(tag),
+            background: `color-mix(in srgb, ${tagColor(tag)} 16%, transparent)`,
+          }}
+          className="shrink-0 rounded px-1 text-[10px] font-semibold leading-4"
+        >
+          {tag}
+        </span>
+      ))}
+      <span className="min-w-0 truncate">{rest}</span>
+    </span>
+  );
+}
+
+/** A title-line-high box (20px, the text-sm line height) that centers a glyph. */
+function LineBox({ children }: { children: ReactNode }) {
+  return <span className="flex h-5 shrink-0 items-center">{children}</span>;
+}
+
+function ThreadRow({
+  row,
+  active,
+  actions,
+  onNavigate,
+  inInactive = false,
+}: {
+  row: Row<SidebarThread>;
+  active: boolean;
+  actions: Actions;
+  onNavigate: () => void;
+  inInactive?: boolean;
+}) {
+  const { thread, depth } = row;
+  const { marks, setInactive } = useContext(InactiveContext);
+  const shortcut = useSidebarThreadShortcut(thread.id);
+  const [renaming, setRenaming] = useState(false);
+  const branch = thread.environment?.branchName ?? null;
+
+  const items: MenuItem[] = [
+    { label: "Open in split", run: () => actions.open(thread.id, { split: true }) },
+    { label: "Rename", run: () => setRenaming(true) },
+    {
+      label: thread.isPinned ? "Unpin" : "Pin",
+      run: () => void actions.setPinned(thread.id, !thread.isPinned),
+    },
+    {
+      label: thread.isUnread ? "Mark as read" : "Mark as unread",
+      run: () => void actions.setRead(thread.id, thread.isUnread),
+    },
+    inInactive
+      ? marks.threads[thread.id] !== undefined
+        ? { label: "Mark active", run: () => setInactive("thread", thread.id, false) }
+        : { label: "Mark project active", run: () => setInactive("project", thread.projectId, false) }
+      : { label: "Mark inactive", run: () => setInactive("thread", thread.id, true) },
+    { label: "Archive", run: () => actions.archive(thread.id) },
+    { label: "Delete…", run: () => actions.requestDelete(thread.id), destructive: true },
+  ];
+
+  return (
+    <a
+      href={thread.href}
+      data-sidebar-thread-shortcut-target=""
+      data-sidebar-thread-id={thread.id}
+      aria-current={active ? "page" : undefined}
+      aria-label={thread.displayTitle}
+      onClick={(event) => {
+        if (renaming) {
+          event.preventDefault();
+          return;
+        }
+        onNavigate();
+      }}
+      style={{ paddingLeft: 22 + depth * 14 }}
+      className={cn(
+        "group/row flex min-w-0 gap-2 rounded-md pr-1.5 text-sm text-sidebar-foreground no-underline hover:bg-sidebar-accent",
+        // Two-line rows (title + branch) keep every glyph on the title line.
+        branch !== null && !renaming ? "min-h-7 items-start py-1" : "h-7 items-center",
+        active && "bg-sidebar-accent font-medium",
+        attentionOf(thread) === null && !active && "text-sidebar-foreground/85",
+      )}
+    >
+      <LineBox>
+        <ProviderGlyph providerId={thread.providerId} />
+      </LineBox>
+      {renaming ? (
+        <RenameInput
+          initial={thread.displayTitle}
+          onDone={(title) => {
+            setRenaming(false);
+            if (title !== null && title !== thread.displayTitle) void actions.rename(thread.id, title);
+          }}
+        />
+      ) : (
+        <span className="flex min-w-0 flex-1 flex-col">
+          <TitleLine thread={thread} />
+          {branch !== null && (
+            <span
+              title={thread.environment?.isWorktree ? `${branch} (worktree)` : branch}
+              className="flex min-w-0 items-center gap-1 text-[11px] font-normal leading-4 text-muted-foreground"
+            >
+              <Icon name="GitBranch" fallback="Code" className="size-3 shrink-0" />
+              <span className="truncate">{branch}</span>
+            </span>
+          )}
+        </span>
+      )}
+      <LineBox>
+        {shortcut !== null ? (
+          <kbd className="shrink-0 rounded border border-border px-1 text-[10px] text-muted-foreground">
+            {shortcut.label}
+          </kbd>
+        ) : (
+          <StatusGlyph thread={thread} />
+        )}
+      </LineBox>
+      {!renaming && (
+        <LineBox>
+          <button
+            type="button"
+            aria-label="Archive thread"
+            title="Archive"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              actions.archive(thread.id);
+            }}
+            className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover/row:opacity-100 focus-visible:opacity-100"
+          >
+            <Icon name="Archive" fallback="Dot" className="size-3.5" />
+          </button>
+          <RowMenu items={items} />
+        </LineBox>
+      )}
+    </a>
+  );
+}
+
+// ---------------------------------------------------------------- group headers
+
+function GroupHeader({
+  collapsed,
+  onToggle,
+  level,
+  title,
+  icon,
+  attention,
+  count,
+  action,
+}: {
+  collapsed: boolean;
+  onToggle: () => void;
+  level: "machine" | "project" | "inactive";
+  title: string;
+  icon?: ReactNode;
+  attention: Attention;
+  count: number;
+  action?: ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "group/row flex h-7 min-w-0 items-center gap-1.5 rounded-md pr-1.5",
+        level === "machine" && "pl-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+        level === "project" && "pl-2 text-sm text-sidebar-foreground",
+        level === "inactive" && "pl-2 text-xs text-muted-foreground",
+      )}
+    >
+      <button
+        type="button"
+        aria-expanded={!collapsed}
+        onClick={onToggle}
+        className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+      >
+        <Icon
+          name={collapsed ? "ChevronRight" : "ChevronDown"}
+          fallback="Dot"
+          className="size-3 shrink-0 text-muted-foreground"
+        />
+        {icon}
+        <span className="min-w-0 truncate">{title}</span>
+        {collapsed && (
+          <span className="shrink-0 text-[10px] font-normal text-muted-foreground">{count}</span>
+        )}
+      </button>
+      {collapsed && attention !== null && <Dot kind={attention} />}
+      {action}
+    </div>
+  );
+}
+
+function NewThreadButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 hover:bg-sidebar-accent hover:text-sidebar-foreground group-hover/row:opacity-100 focus-visible:opacity-100"
+    >
+      <Icon name="Plus" fallback="Dot" className="size-3.5" />
+    </button>
+  );
+}
+
+function ProjectSection({
+  machine,
+  project,
+  collapsed,
+  toggle,
+  activeThreadId,
+  actions,
+  onNavigate,
+  inInactive = false,
+}: {
+  machine: MachineGroup<SidebarThread>;
+  project: ProjectGroup<SidebarThread>;
+  collapsed: ReadonlySet<string>;
+  toggle: (key: string) => void;
+  activeThreadId: string | null;
+  actions: Actions;
+  onNavigate: () => void;
+  inInactive?: boolean;
+}) {
+  const key = `p:${project.key}`;
+  const isCollapsed = collapsed.has(key);
+  const { marks, setInactive } = useContext(InactiveContext);
+  const projectMarked = marks.projects[project.projectId] !== undefined;
+  const menu: MenuItem[] = [];
+  if (projectMarked) {
+    menu.push({
+      label: "Mark project active",
+      run: () => setInactive("project", project.projectId, false),
+    });
+  } else if (inInactive) {
+    menu.push({
+      label: "Mark all active",
+      run: () => {
+        for (const row of project.rows) setInactive("thread", row.thread.id, false);
+      },
+    });
+  } else if (!project.isPersonal) {
+    menu.push({
+      label: "Mark project inactive",
+      run: () => setInactive("project", project.projectId, true),
+    });
+  }
+  return (
+    <div>
+      <GroupHeader
+        level="project"
+        collapsed={isCollapsed}
+        onToggle={() => toggle(key)}
+        title={project.name}
+        attention={rollup(project.rows)}
+        count={project.rows.length}
+        action={
+          <>
+            <NewThreadButton
+              label={`New thread in ${project.name} on ${machine.name}`}
+              onClick={() => {
+                actions.openNewThread({
+                  ...(project.isPersonal ? {} : { projectId: project.projectId }),
+                  ...(machine.hostId !== null ? { hostId: machine.hostId } : {}),
+                  focusPrompt: true,
+                });
+                onNavigate();
+              }}
+            />
+            {menu.length > 0 && <RowMenu items={menu} />}
+          </>
+        }
+      />
+      {!isCollapsed &&
+        project.rows.map((row) => (
+          <ThreadRow
+            key={row.thread.id}
+            row={row}
+            active={row.thread.id === activeThreadId}
+            actions={actions}
+            onNavigate={onNavigate}
+            inInactive={inInactive}
+          />
+        ))}
+    </div>
+  );
+}
+
+/** A machine's quiet threads: last, collapsed by default, dimmed. */
+function InactiveSection({
+  machine,
+  collapsed,
+  toggle,
+  activeThreadId,
+  actions,
+  onNavigate,
+}: {
+  machine: MachineGroup<SidebarThread>;
+  collapsed: ReadonlySet<string>;
+  toggle: (key: string) => void;
+  activeThreadId: string | null;
+  actions: Actions;
+  onNavigate: () => void;
+}) {
+  // Stored as "open" so a new machine's inactive group starts collapsed.
+  const openKey = `inactive-open:${machine.key}`;
+  const isCollapsed = !collapsed.has(openKey);
+  const count = machine.inactive.reduce((sum, project) => sum + project.rows.length, 0);
+  return (
+    <div className="mt-1">
+      <GroupHeader
+        level="inactive"
+        collapsed={isCollapsed}
+        onToggle={() => toggle(openKey)}
+        title="Inactive"
+        icon={<Icon name="Moon" fallback="EyeOff" className="size-3 shrink-0" />}
+        attention={null}
+        count={count}
+      />
+      {!isCollapsed && (
+        <div className="opacity-60 transition-opacity hover:opacity-100 focus-within:opacity-100">
+          {machine.inactive.map((project) => (
+            <ProjectSection
+              key={project.key}
+              machine={machine}
+              project={project}
+              collapsed={collapsed}
+              toggle={toggle}
+              activeThreadId={activeThreadId}
+              actions={actions}
+              onNavigate={onNavigate}
+              inInactive
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- list
+
+function MachineThreadList(props: PluginThreadListProps) {
+  return (
+    <TagColorProvider>
+      <MachineThreadTree {...props} />
+    </TagColorProvider>
+  );
+}
+
+function MachineThreadTree({ activeThreadId, onNavigate }: PluginThreadListProps) {
+  const { status, threads, projects } = experimental_useSidebarThreads();
+  const actions = experimental_useSidebarThreadActions();
+  const { collapsed, toggle } = useCollapsed();
+  const inactive = useInactiveMarks();
+  const tree = useMemo(
+    () =>
+      buildTree(threads, projects, { inactive: inactive.marks, needsAttention: isWaitingForUser }),
+    [threads, projects, inactive.marks],
+  );
+
+  if (status === "loading" && threads.length === 0) {
+    return <p className="px-3 py-2 text-sm text-muted-foreground">Loading threads…</p>;
+  }
+  if (status === "error" && threads.length === 0) {
+    return <p className="px-3 py-2 text-sm text-destructive-text">Could not load threads.</p>;
+  }
+  if (tree.pinned.length === 0 && tree.machines.length === 0) {
+    return <p className="px-3 py-2 text-sm text-muted-foreground">No threads yet.</p>;
+  }
+
+  return (
+    <InactiveContext.Provider value={inactive}>
+    <nav aria-label="Threads by machine" className="flex flex-col gap-3 px-2 pb-4">
+      {tree.pinned.length > 0 && (
+        <div>
+          <GroupHeader
+            level="machine"
+            collapsed={collapsed.has("pinned")}
+            onToggle={() => toggle("pinned")}
+            title="Pinned"
+            icon={<Icon name="Pin" fallback="Dot" className="size-3 shrink-0" />}
+            attention={rollup(tree.pinned)}
+            count={tree.pinned.length}
+          />
+          {!collapsed.has("pinned") &&
+            tree.pinned.map((row) => (
+              <ThreadRow
+                key={row.thread.id}
+                row={{ ...row, depth: -1 }}
+                active={row.thread.id === activeThreadId}
+                actions={actions}
+                onNavigate={onNavigate}
+              />
+            ))}
+        </div>
+      )}
+      {tree.machines.map((machine) => {
+        const key = `m:${machine.key}`;
+        const isCollapsed = collapsed.has(key);
+        const rows = machine.projects.flatMap((project) => project.rows);
+        return (
+          <section key={machine.key} aria-label={machine.fullName}>
+            <GroupHeader
+              level="machine"
+              collapsed={isCollapsed}
+              onToggle={() => toggle(key)}
+              title={machine.name}
+              icon={<Icon name="Laptop" fallback="Monitor" className="size-3 shrink-0" />}
+              attention={rollup(rows)}
+              count={rows.length}
+            />
+            {!isCollapsed &&
+              machine.projects.map((project) => (
+                <ProjectSection
+                  key={project.key}
+                  machine={machine}
+                  project={project}
+                  collapsed={collapsed}
+                  toggle={toggle}
+                  activeThreadId={activeThreadId}
+                  actions={actions}
+                  onNavigate={onNavigate}
+                />
+              ))}
+            {!isCollapsed && machine.inactive.length > 0 && (
+              <InactiveSection
+                machine={machine}
+                collapsed={collapsed}
+                toggle={toggle}
+                activeThreadId={activeThreadId}
+                actions={actions}
+                onNavigate={onNavigate}
+              />
+            )}
+          </section>
+        );
+      })}
+    </nav>
+    </InactiveContext.Provider>
+  );
+}
+
+export default definePluginApp((app) => {
+  app.slots.experimental_threadList({
+    id: "machine-tree",
+    title: "Machine → Project",
+    description: "Threads grouped by the machine they run on, then by project.",
+    component: MachineThreadList,
+  });
+  app.slots.settingsSection({
+    id: "tags",
+    title: "Title tags",
+    description: "Colors for [Tag] prefixes in thread titles.",
+    component: TagSettings,
+  });
+});
