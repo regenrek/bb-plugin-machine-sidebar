@@ -12,7 +12,7 @@ several machines, for example a laptop and a remote Mac or Linux box.
   environment runs on. A project with threads on two machines appears under
   both, each with only that machine's threads. Threads without a project
   appear as "Threads" under their machine.
-- **Title tags.** Start a title with `[Tag]`, e.g. `[Coding][Running] Weatherloop`,
+- **Title tags.** Start a title with `[Tag]`, e.g. `[Coding][Running] Checkout Flow`,
   and each tag is drawn as a colored pill. Pick colors per tag under
   Settings → Installed plugins → Machine Sidebar → Title tags; other tags get a
   stable automatic color. Changes show up in every open window right away.

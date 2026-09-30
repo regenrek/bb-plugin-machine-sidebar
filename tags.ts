@@ -1,5 +1,5 @@
-// Leading title tags for Machine Sidebar: "[TEST][Running] Weatherloop" is
-// drawn as two colored pills followed by "Weatherloop". Colors come from the
+// Leading title tags for Machine Sidebar: "[TEST][Running] Checkout Flow" is
+// drawn as two colored pills followed by "Checkout Flow". Colors come from the
 // user's tag rules (Settings → Machine Sidebar) or, for tags without a rule,
 // from a stable hash of the tag name. Kept free of React and the SDK runtime
 // so it can be tested with plain Node and shared by server and app.

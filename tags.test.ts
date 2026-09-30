@@ -15,9 +15,9 @@ test("splits leading tags off the title", () => {
     tags: ["TEST"],
     rest: "claude calls codex",
   });
-  assert.deepEqual(parseTitleTags("[Coding][Running] Weatherloop"), {
+  assert.deepEqual(parseTitleTags("[Coding][Running] Checkout Flow"), {
     tags: ["Coding", "Running"],
-    rest: "Weatherloop",
+    rest: "Checkout Flow",
   });
   assert.deepEqual(parseTitleTags("  [ WIP ]  [x]  rest [not a tag]"), {
     tags: ["WIP", "x"],

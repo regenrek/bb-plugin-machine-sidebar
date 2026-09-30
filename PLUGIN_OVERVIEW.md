@@ -4,7 +4,7 @@ Machine Sidebar replaces bb's thread list with a tree: machine first, then proje
 
 ## Title tags
 
-Start a thread title with one or more bracketed tags, such as `[Coding][Running] Weatherloop`, and each tag is drawn as a colored pill in front of the title. Under Settings → Installed plugins → Machine Sidebar → Title tags you list tags and pick one of nine colors for each; saving updates every open window right away. Tags without a rule get a stable automatic color from their name. Brackets later in a title stay plain text, and the title itself is unchanged everywhere else in bb.
+Start a thread title with one or more bracketed tags, such as `[Coding][Running] Checkout Flow`, and each tag is drawn as a colored pill in front of the title. Under Settings → Installed plugins → Machine Sidebar → Title tags you list tags and pick one of nine colors for each; saving updates every open window right away. Tags without a rule get a stable automatic color from their name. Brackets later in a title stay plain text, and the title itself is unchanged everywhere else in bb.
 
 ## Inactive threads and projects
 
