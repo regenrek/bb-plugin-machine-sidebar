@@ -24,6 +24,7 @@ import { TagColorProvider, useTagColor } from "./tag-rules";
 import { parseTitleTags } from "./tags";
 import {
   buildTree,
+  visibleRows,
   NO_INACTIVE_MARKS,
   type InactiveMarks,
   type MachineGroup,
@@ -82,15 +83,13 @@ function useCollapsed() {
 
 type Attention = "waiting" | "failed" | "done" | null;
 
-const BUSY = new Set([
-  "runtime",
-  "workflow",
-  "background-agent",
-  "background-command",
-  "working-draft",
-  "goal",
-  "plan-mode",
-]);
+/**
+ * The agent itself is working on a turn. These are the runtime states bb's own
+ * list treats as busy; a background command such as a dev server does not
+ * count, so it never keeps the spinner going.
+ */
+const AGENT_WORKING = new Set(["active", "starting", "provisioning", "stopping", "host-reconnecting"]);
+const isAgentWorking = (thread: SidebarThread) => AGENT_WORKING.has(thread.runtimeStatus);
 
 function attentionOf(thread: SidebarThread): Attention {
   if (thread.hasPendingInteraction || thread.indicator === "waiting-for-input") return "waiting";
@@ -105,9 +104,9 @@ const ATTENTION_DOT: Record<Exclude<Attention, null>, string> = {
   done: "bg-success",
 };
 
-/** The most urgent attention among rows, for collapsed group headers. */
-function rollup(rows: readonly Row<SidebarThread>[]): Attention {
-  const kinds = rows.map((row) => attentionOf(row.thread));
+/** The most urgent attention among threads. */
+function mostUrgent(threads: readonly SidebarThread[]): Attention {
+  const kinds = threads.map(attentionOf);
   return kinds.includes("waiting")
     ? "waiting"
     : kinds.includes("failed")
@@ -115,6 +114,11 @@ function rollup(rows: readonly Row<SidebarThread>[]): Attention {
       : kinds.includes("done")
         ? "done"
         : null;
+}
+
+/** The most urgent attention among rows, for collapsed group headers. */
+function rollup(rows: readonly Row<SidebarThread>[]): Attention {
+  return mostUrgent(rows.map((row) => row.thread));
 }
 
 function Dot({ kind, label }: { kind: Exclude<Attention, null>; label?: string }) {
@@ -138,12 +142,29 @@ function Spinner({ label }: { label: string }) {
   );
 }
 
-function StatusGlyph({ thread }: { thread: SidebarThread }) {
+/**
+ * One status glyph per row. `hidden` are threads folded under a collapsed
+ * parent: their attention and work show on the parent until it is expanded.
+ */
+function StatusGlyph({
+  thread,
+  hidden = [],
+}: {
+  thread: SidebarThread;
+  hidden?: readonly SidebarThread[];
+}) {
   const { hasUnsubmittedDraft } = useSidebarThreadDraft(thread.id);
-  const attention = attentionOf(thread);
-  const label = thread.indicatorLabel ?? undefined;
-  if (attention !== null) return <Dot kind={attention} label={label ?? attention} />;
-  if (BUSY.has(thread.indicator)) return <Spinner label={label ?? "Working"} />;
+  const attention = mostUrgent([thread, ...hidden]);
+  const ownAttention = attentionOf(thread);
+  if (attention !== null) {
+    const label =
+      ownAttention === attention
+        ? (thread.indicatorLabel ?? attention)
+        : `A sub-thread ${attention === "waiting" ? "needs your input" : attention === "failed" ? "failed" : "finished"}`;
+    return <Dot kind={attention} label={label} />;
+  }
+  if (isAgentWorking(thread)) return <Spinner label="Agent is working" />;
+  if (hidden.some(isAgentWorking)) return <Spinner label="A sub-thread's agent is working" />;
   if (thread.indicator === "queued-waiting") {
     return <Icon name="Clock" fallback="Dot" className="size-3 shrink-0 text-muted-foreground" />;
   }
@@ -153,6 +174,34 @@ function StatusGlyph({ thread }: { thread: SidebarThread }) {
     );
   }
   return null;
+}
+
+/** Background work bb reports per thread, drawn calmly next to the status. */
+const ACTIVITY = [
+  { key: "backgroundAgents", icon: "UserRoundPlus", fallback: "Users", one: "subagent", many: "subagents" },
+  { key: "backgroundCommands", icon: "Terminal", fallback: "Code", one: "background command", many: "background commands" },
+  { key: "workflows", icon: "Workflow", fallback: "Dot", one: "workflow", many: "workflows" },
+  { key: "planMode", icon: "ListTodo", fallback: "Dot", one: "plan in progress", many: "plans in progress" },
+  { key: "goals", icon: "Target", fallback: "Dot", one: "goal", many: "goals" },
+] as const;
+
+function ActivityGlyphs({ thread }: { thread: SidebarThread }) {
+  const running = ACTIVITY.filter((item) => thread.activity[item.key] > 0);
+  if (running.length === 0) return null;
+  return (
+    <span className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
+      {running.map((item) => {
+        const count = thread.activity[item.key];
+        const label = `${count} ${count === 1 ? item.one : item.many} running`;
+        return (
+          <span key={item.key} role="img" aria-label={label} title={label} className="flex items-center gap-0.5">
+            <Icon name={item.icon} fallback={item.fallback} className="size-3" />
+            {count > 1 && <span className="text-[10px] leading-none">{count}</span>}
+          </span>
+        );
+      })}
+    </span>
+  );
 }
 
 // ---------------------------------------------------------------- row menu
@@ -329,12 +378,19 @@ function ThreadRow({
   actions,
   onNavigate,
   inInactive = false,
+  childrenCollapsed = false,
+  onToggleChildren,
+  hiddenDescendants = [],
 }: {
   row: Row<SidebarThread>;
   active: boolean;
   actions: Actions;
   onNavigate: () => void;
   inInactive?: boolean;
+  childrenCollapsed?: boolean;
+  onToggleChildren?: () => void;
+  /** Threads folded under this row while its children are collapsed. */
+  hiddenDescendants?: readonly SidebarThread[];
 }) {
   const { thread, depth } = row;
   const { marks, setInactive } = useContext(InactiveContext);
@@ -378,13 +434,30 @@ function ThreadRow({
       }}
       style={{ paddingLeft: 22 + depth * 14 }}
       className={cn(
-        "group/row flex min-w-0 gap-2 rounded-md pr-1.5 text-sm text-sidebar-foreground no-underline hover:bg-sidebar-accent",
+        "group/row relative flex min-w-0 gap-2 rounded-md pr-1.5 text-sm text-sidebar-foreground no-underline hover:bg-sidebar-accent",
         // Two-line rows (title + branch) keep every glyph on the title line.
         branch !== null && !renaming ? "min-h-7 items-start py-1" : "h-7 items-center",
         active && "bg-sidebar-accent font-medium",
         attentionOf(thread) === null && !active && "text-sidebar-foreground/85",
       )}
     >
+      {row.childCount > 0 && onToggleChildren !== undefined && (
+        <button
+          type="button"
+          aria-expanded={!childrenCollapsed}
+          aria-label={`${childrenCollapsed ? "Show" : "Hide"} ${row.childCount} sub-thread${row.childCount === 1 ? "" : "s"}`}
+          title={`${row.childCount} sub-thread${row.childCount === 1 ? "" : "s"}`}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onToggleChildren();
+          }}
+          style={{ left: 4 + depth * 14 }}
+          className="absolute top-1.5 flex size-4 items-center justify-center rounded text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        >
+          <Icon name={childrenCollapsed ? "ChevronRight" : "ChevronDown"} fallback="Dot" className="size-3" />
+        </button>
+      )}
       <LineBox>
         <ProviderGlyph providerId={thread.providerId} />
       </LineBox>
@@ -411,13 +484,24 @@ function ThreadRow({
         </span>
       )}
       <LineBox>
-        {shortcut !== null ? (
-          <kbd className="shrink-0 rounded border border-border px-1 text-[10px] text-muted-foreground">
-            {shortcut.label}
-          </kbd>
-        ) : (
-          <StatusGlyph thread={thread} />
-        )}
+        <span className="flex items-center gap-1.5">
+          {childrenCollapsed && row.childCount > 0 && (
+            <span
+              title={`${hiddenDescendants.length} hidden sub-thread${hiddenDescendants.length === 1 ? "" : "s"}`}
+              className="rounded bg-muted px-1 text-[10px] leading-4 text-muted-foreground"
+            >
+              {hiddenDescendants.length}
+            </span>
+          )}
+          <ActivityGlyphs thread={thread} />
+          {shortcut !== null ? (
+            <kbd className="shrink-0 rounded border border-border px-1 text-[10px] text-muted-foreground">
+              {shortcut.label}
+            </kbd>
+          ) : (
+            <StatusGlyph thread={thread} hidden={hiddenDescendants} />
+          )}
+        </span>
       </LineBox>
       {!renaming && (
         <LineBox>
@@ -530,6 +614,7 @@ function ProjectSection({
   const key = `p:${project.key}`;
   const isCollapsed = collapsed.has(key);
   const { marks, setInactive } = useContext(InactiveContext);
+  const threadById = new Map(project.rows.map((row) => [row.thread.id, row.thread]));
   const projectMarked = marks.projects[project.projectId] !== undefined;
   const menu: MenuItem[] = [];
   if (projectMarked) {
@@ -577,16 +662,26 @@ function ProjectSection({
         }
       />
       {!isCollapsed &&
-        project.rows.map((row) => (
-          <ThreadRow
-            key={row.thread.id}
-            row={row}
-            active={row.thread.id === activeThreadId}
-            actions={actions}
-            onNavigate={onNavigate}
-            inInactive={inInactive}
-          />
-        ))}
+        visibleRows(project.rows, (id) => collapsed.has(`t:${id}`)).map((row) => {
+          const childrenCollapsed = collapsed.has(`t:${row.thread.id}`);
+          return (
+            <ThreadRow
+              key={row.thread.id}
+              row={row}
+              active={row.thread.id === activeThreadId}
+              actions={actions}
+              onNavigate={onNavigate}
+              inInactive={inInactive}
+              childrenCollapsed={childrenCollapsed}
+              onToggleChildren={() => toggle(`t:${row.thread.id}`)}
+              hiddenDescendants={
+                childrenCollapsed
+                  ? row.descendantIds.flatMap((id) => threadById.get(id) ?? [])
+                  : undefined
+              }
+            />
+          );
+        })}
     </div>
   );
 }

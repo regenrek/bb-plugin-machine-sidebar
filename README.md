@@ -21,9 +21,16 @@ several machines, for example a laptop and a remote Mac or Linux box.
   dimmed. It comes back by itself when it waits for your input or a new turn
   finishes or fails; opening or reading it does not wake it.
 - **Branch and status.** Each row shows the git branch under the title and a
-  status dot: amber waits for you, red failed, green finished and unread, a
-  spinner means the agent is working. Collapsed groups show the most urgent
-  dot they contain.
+  status dot: amber waits for you, red failed, green finished and unread. A
+  spinner appears only while the agent itself is working on a turn.
+  Collapsed groups show the most urgent dot they contain.
+- **Background work.** Quiet icons with a count show what keeps running
+  without the agent: subagents, background commands such as a dev server,
+  workflows, plan mode, and goals. A dev server no longer looks like a
+  thinking agent.
+- **Sub-threads.** Child threads sit under their parent with a chevron to fold
+  them. A folded parent shows how many it hides and still raises their status
+  dot or spinner.
 - **Quick actions.** Hover a project for **+** (new thread in that project on
   that machine). Hover a thread for **Archive** and **…** (open in split,
   rename, pin, mark read/unread, mark inactive, delete).

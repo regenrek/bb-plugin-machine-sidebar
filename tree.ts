@@ -49,6 +49,10 @@ export interface TreeProject {
 export interface Row<T extends TreeThread> {
   thread: T;
   depth: number;
+  /** Direct children nested under this row in the same list. */
+  childCount: number;
+  /** Every thread nested below this row, at any depth. */
+  descendantIds: string[];
 }
 
 export interface ProjectGroup<T extends TreeThread> {
@@ -102,14 +106,40 @@ function nestRows<T extends TreeThread>(threads: readonly T[]): Row<T>[] {
   }
   const rows: Row<T>[] = [];
   const seen = new Set<string>();
-  const visit = (thread: T, depth: number) => {
-    if (seen.has(thread.id)) return;
+  /** Adds the thread and its subtree; returns the added row, or null if already shown. */
+  const visit = (thread: T, depth: number): Row<T> | null => {
+    if (seen.has(thread.id)) return null;
     seen.add(thread.id);
-    rows.push({ thread, depth });
-    for (const child of (children.get(thread.id) ?? []).sort(newestFirst)) visit(child, depth + 1);
+    const row: Row<T> = { thread, depth, childCount: 0, descendantIds: [] };
+    rows.push(row);
+    for (const child of (children.get(thread.id) ?? []).sort(newestFirst)) {
+      const childRow = visit(child, depth + 1);
+      if (childRow === null) continue;
+      row.childCount += 1;
+      row.descendantIds.push(child.id, ...childRow.descendantIds);
+    }
+    return row;
   };
   for (const root of roots.sort(newestFirst)) visit(root, 0);
   return rows;
+}
+
+/** Drops rows nested under a collapsed row; `isCollapsed` takes a thread id. */
+export function visibleRows<T extends TreeThread>(
+  rows: readonly Row<T>[],
+  isCollapsed: (threadId: string) => boolean,
+): Row<T>[] {
+  const result: Row<T>[] = [];
+  let hideDeeperThan: number | null = null;
+  for (const row of rows) {
+    if (hideDeeperThan !== null) {
+      if (row.depth > hideDeeperThan) continue;
+      hideDeeperThan = null;
+    }
+    result.push(row);
+    if (row.childCount > 0 && isCollapsed(row.thread.id)) hideDeeperThan = row.depth;
+  }
+  return result;
 }
 
 /** Whether a thread currently sits in its machine's "Inactive" group. */
@@ -170,7 +200,7 @@ export function buildTree<T extends TreeThread>(
         (a.pinSortKey ?? "").localeCompare(b.pinSortKey ?? "") ||
         (a.pinnedAt ?? 0) - (b.pinnedAt ?? 0),
     )
-    .map((thread) => ({ thread, depth: 0 }));
+    .map((thread) => ({ thread, depth: 0, childCount: 0, descendantIds: [] as string[] }));
 
   // machine key → active / inactive → project id → threads
   interface Bucket {

@@ -1,7 +1,7 @@
 // Run: node --test tree.test.ts
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildTree, isInactive, shortMachineName, type TreeThread } from "./tree.ts";
+import { buildTree, isInactive, shortMachineName, visibleRows, type TreeThread } from "./tree.ts";
 
 const MAC = { id: "h_mac", name: "laptop" };
 const DEV = { id: "h_dev", name: "Ada’s MacBook Pro" };
@@ -171,4 +171,31 @@ test("inactive threads wake up on new attention, not on reading", () => {
 test("a thread mark takes precedence over its project's mark", () => {
   const marks = { threads: { t: 300 }, projects: { p_a: 100 } };
   assert.equal(isInactive(thread("t", { latestAttentionAt: 200 }), marks), true);
+});
+
+test("counts children and hides rows under a collapsed parent", () => {
+  const tree = buildTree(
+    [
+      thread("parent", { updatedAt: 1 }),
+      thread("child-old", { parentThreadId: "parent", updatedAt: 2 }),
+      thread("child-new", { parentThreadId: "parent", updatedAt: 3 }),
+      thread("grandchild", { parentThreadId: "child-old", updatedAt: 4 }),
+      thread("next", { updatedAt: 0 }),
+    ],
+    projects,
+  );
+  const rows = tree.machines[0].projects[0].rows;
+  const byId = new Map(rows.map((row) => [row.thread.id, row]));
+  assert.equal(byId.get("parent")?.childCount, 2);
+  assert.deepEqual(byId.get("parent")?.descendantIds.sort(), ["child-new", "child-old", "grandchild"]);
+  assert.equal(byId.get("child-old")?.childCount, 1);
+  assert.equal(byId.get("next")?.childCount, 0);
+
+  const ids = (collapsed: string[]) =>
+    visibleRows(rows, (id) => collapsed.includes(id)).map((row) => row.thread.id);
+  assert.deepEqual(ids([]), ["parent", "child-new", "child-old", "grandchild", "next"]);
+  assert.deepEqual(ids(["parent"]), ["parent", "next"]);
+  assert.deepEqual(ids(["child-old"]), ["parent", "child-new", "child-old", "next"]);
+  // Collapsing a row without children changes nothing.
+  assert.deepEqual(ids(["next"]), ["parent", "child-new", "child-old", "grandchild", "next"]);
 });
