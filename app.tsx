@@ -14,6 +14,7 @@ import {
   ThreadTitle,
   useSidebarThreadDraft,
   useSidebarThreadShortcut,
+  useSettings,
   type PluginThreadListProps,
 } from "@get-bb/plugin-sdk/app";
 import { Icon } from "@/components/ui/icon";
@@ -22,6 +23,10 @@ import { useInactiveMarks, type SetInactive } from "./inactive";
 import TagSettings from "./settings";
 import { TagColorProvider, useTagColor } from "./tag-rules";
 import { parseTitleTags } from "./tags";
+import { S } from "./strings";
+import { FARCALL_SETTING } from "./farcall-contract";
+import { FarcallTasks } from "./farcall-tasks";
+import { HierarchyGuides, useHierarchyGuides } from "./hierarchy-guides";
 import {
   buildTree,
   visibleRows,
@@ -160,11 +165,11 @@ function StatusGlyph({
     const label =
       ownAttention === attention
         ? (thread.indicatorLabel ?? attention)
-        : `A sub-thread ${attention === "waiting" ? "needs your input" : attention === "failed" ? "failed" : "finished"}`;
+        : S.status.subThreadAttention(attention);
     return <Dot kind={attention} label={label} />;
   }
-  if (isAgentWorking(thread)) return <Spinner label="Agent is working" />;
-  if (hidden.some(isAgentWorking)) return <Spinner label="A sub-thread's agent is working" />;
+  if (isAgentWorking(thread)) return <Spinner label={S.status.agentWorking} />;
+  if (hidden.some(isAgentWorking)) return <Spinner label={S.status.subThreadAgentWorking} />;
   if (thread.indicator === "queued-waiting") {
     return <Icon name="Clock" fallback="Dot" className="size-3 shrink-0 text-muted-foreground" />;
   }
@@ -178,11 +183,11 @@ function StatusGlyph({
 
 /** Background work bb reports per thread, drawn calmly next to the status. */
 const ACTIVITY = [
-  { key: "backgroundAgents", icon: "UserRoundPlus", fallback: "Users", one: "subagent", many: "subagents" },
-  { key: "backgroundCommands", icon: "Terminal", fallback: "Code", one: "background command", many: "background commands" },
-  { key: "workflows", icon: "Workflow", fallback: "Dot", one: "workflow", many: "workflows" },
-  { key: "planMode", icon: "ListTodo", fallback: "Dot", one: "plan in progress", many: "plans in progress" },
-  { key: "goals", icon: "Target", fallback: "Dot", one: "goal", many: "goals" },
+  { key: "backgroundAgents", icon: "UserRoundPlus", fallback: "Users" },
+  { key: "backgroundCommands", icon: "Terminal", fallback: "Code" },
+  { key: "workflows", icon: "Workflow", fallback: "Dot" },
+  { key: "planMode", icon: "ListTodo", fallback: "Dot" },
+  { key: "goals", icon: "Target", fallback: "Dot" },
 ] as const;
 
 function ActivityGlyphs({ thread }: { thread: SidebarThread }) {
@@ -192,7 +197,8 @@ function ActivityGlyphs({ thread }: { thread: SidebarThread }) {
     <span className="flex shrink-0 items-center gap-1.5 text-muted-foreground">
       {running.map((item) => {
         const count = thread.activity[item.key];
-        const label = `${count} ${count === 1 ? item.one : item.many} running`;
+        const [one, many] = S.activity[item.key];
+        const label = S.status.activity(count, one, many);
         return (
           <span key={item.key} role="img" aria-label={label} title={label} className="flex items-center gap-0.5">
             <Icon name={item.icon} fallback={item.fallback} className="size-3" />
@@ -246,7 +252,7 @@ function RowMenu({ items }: { items: MenuItem[] }) {
     <>
       <button
         type="button"
-        aria-label="Thread actions"
+        aria-label={S.row.actions}
         aria-haspopup="menu"
         onClick={open}
         className={cn(
@@ -303,7 +309,7 @@ function RenameInput({
     <input
       autoFocus
       value={value}
-      aria-label="Thread title"
+      aria-label={S.row.titleInput}
       onChange={(event) => setValue(event.target.value)}
       onFocus={(event) => event.target.select()}
       onClick={(event) => {
@@ -396,29 +402,32 @@ function ThreadRow({
   const { marks, setInactive } = useContext(InactiveContext);
   const shortcut = useSidebarThreadShortcut(thread.id);
   const [renaming, setRenaming] = useState(false);
+  const { values } = useSettings();
+  const guides = useHierarchyGuides();
   const branch = thread.environment?.branchName ?? null;
 
   const items: MenuItem[] = [
-    { label: "Open in split", run: () => actions.open(thread.id, { split: true }) },
-    { label: "Rename", run: () => setRenaming(true) },
+    { label: S.menu.split, run: () => actions.open(thread.id, { split: true }) },
+    { label: S.menu.rename, run: () => setRenaming(true) },
     {
-      label: thread.isPinned ? "Unpin" : "Pin",
+      label: thread.isPinned ? S.menu.unpin : S.menu.pin,
       run: () => void actions.setPinned(thread.id, !thread.isPinned),
     },
     {
-      label: thread.isUnread ? "Mark as read" : "Mark as unread",
+      label: thread.isUnread ? S.menu.markRead : S.menu.markUnread,
       run: () => void actions.setRead(thread.id, thread.isUnread),
     },
     inInactive
       ? marks.threads[thread.id] !== undefined
-        ? { label: "Mark active", run: () => setInactive("thread", thread.id, false) }
-        : { label: "Mark project active", run: () => setInactive("project", thread.projectId, false) }
-      : { label: "Mark inactive", run: () => setInactive("thread", thread.id, true) },
-    { label: "Archive", run: () => actions.archive(thread.id) },
-    { label: "Delete…", run: () => actions.requestDelete(thread.id), destructive: true },
+        ? { label: S.menu.markActive, run: () => setInactive("thread", thread.id, false) }
+        : { label: S.menu.markProjectActive, run: () => setInactive("project", thread.projectId, false) }
+      : { label: S.menu.markInactive, run: () => setInactive("thread", thread.id, true) },
+    { label: S.menu.archive, run: () => actions.archive(thread.id) },
+    { label: S.menu.delete, run: () => actions.requestDelete(thread.id), destructive: true },
   ];
 
   return (
+    <>
     <a
       href={thread.href}
       data-sidebar-thread-shortcut-target=""
@@ -441,12 +450,13 @@ function ThreadRow({
         attentionOf(thread) === null && !active && "text-sidebar-foreground/85",
       )}
     >
+      {guides && <HierarchyGuides levels={depth} />}
       {row.childCount > 0 && onToggleChildren !== undefined && (
         <button
           type="button"
           aria-expanded={!childrenCollapsed}
-          aria-label={`${childrenCollapsed ? "Show" : "Hide"} ${row.childCount} sub-thread${row.childCount === 1 ? "" : "s"}`}
-          title={`${row.childCount} sub-thread${row.childCount === 1 ? "" : "s"}`}
+          aria-label={S.subThreads.toggle(childrenCollapsed, row.childCount)}
+          title={S.subThreads.count(row.childCount)}
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -485,12 +495,9 @@ function ThreadRow({
       )}
       <LineBox>
         <span className="flex items-center gap-1.5">
-          {childrenCollapsed && row.childCount > 0 && (
-            <span
-              title={`${hiddenDescendants.length} hidden sub-thread${hiddenDescendants.length === 1 ? "" : "s"}`}
-              className="rounded bg-muted px-1 text-[10px] leading-4 text-muted-foreground"
-            >
-              {hiddenDescendants.length}
+          {thread.environment?.isWorktree === true && (
+            <span role="img" aria-label={S.status.worktree} title={S.status.worktreeTitle} className="flex shrink-0 text-muted-foreground">
+              <Icon name="GitFork" fallback="GitBranch" aria-hidden className="size-3.5" />
             </span>
           )}
           <ActivityGlyphs thread={thread} />
@@ -507,8 +514,8 @@ function ThreadRow({
         <LineBox>
           <button
             type="button"
-            aria-label="Archive thread"
-            title="Archive"
+            aria-label={S.row.archiveThread}
+            title={S.row.archive}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -522,6 +529,10 @@ function ThreadRow({
         </LineBox>
       )}
     </a>
+    {values?.[FARCALL_SETTING] === true && (
+      <FarcallTasks threadId={thread.id} title={thread.displayTitle} depth={depth} guides={guides} />
+    )}
+    </>
   );
 }
 
@@ -619,19 +630,19 @@ function ProjectSection({
   const menu: MenuItem[] = [];
   if (projectMarked) {
     menu.push({
-      label: "Mark project active",
+      label: S.menu.markProjectActive,
       run: () => setInactive("project", project.projectId, false),
     });
   } else if (inInactive) {
     menu.push({
-      label: "Mark all active",
+      label: S.menu.markAllActive,
       run: () => {
         for (const row of project.rows) setInactive("thread", row.thread.id, false);
       },
     });
   } else if (!project.isPersonal) {
     menu.push({
-      label: "Mark project inactive",
+      label: S.menu.markProjectInactive,
       run: () => setInactive("project", project.projectId, true),
     });
   }
@@ -647,7 +658,7 @@ function ProjectSection({
         action={
           <>
             <NewThreadButton
-              label={`New thread in ${project.name} on ${machine.name}`}
+              label={S.row.newThreadIn(project.name, machine.name)}
               onClick={() => {
                 actions.openNewThread({
                   ...(project.isPersonal ? {} : { projectId: project.projectId }),
@@ -712,7 +723,7 @@ function InactiveSection({
         level="inactive"
         collapsed={isCollapsed}
         onToggle={() => toggle(openKey)}
-        title="Inactive"
+        title={S.groups.inactive}
         icon={<Icon name="Moon" fallback="EyeOff" className="size-3 shrink-0" />}
         attention={null}
         count={count}
@@ -760,25 +771,25 @@ function MachineThreadTree({ activeThreadId, onNavigate }: PluginThreadListProps
   );
 
   if (status === "loading" && threads.length === 0) {
-    return <p className="px-3 py-2 text-sm text-muted-foreground">Loading threads…</p>;
+    return <p className="px-3 py-2 text-sm text-muted-foreground">{S.list.loading}</p>;
   }
   if (status === "error" && threads.length === 0) {
-    return <p className="px-3 py-2 text-sm text-destructive-text">Could not load threads.</p>;
+    return <p className="px-3 py-2 text-sm text-destructive-text">{S.list.loadError}</p>;
   }
   if (tree.pinned.length === 0 && tree.machines.length === 0) {
-    return <p className="px-3 py-2 text-sm text-muted-foreground">No threads yet.</p>;
+    return <p className="px-3 py-2 text-sm text-muted-foreground">{S.list.empty}</p>;
   }
 
   return (
     <InactiveContext.Provider value={inactive}>
-    <nav aria-label="Threads by machine" className="flex flex-col gap-3 px-2 pb-4">
+    <nav aria-label={S.list.label} className="flex flex-col gap-3 px-2 pb-4">
       {tree.pinned.length > 0 && (
         <div>
           <GroupHeader
             level="machine"
             collapsed={collapsed.has("pinned")}
             onToggle={() => toggle("pinned")}
-            title="Pinned"
+            title={S.groups.pinned}
             icon={<Icon name="Pin" fallback="Dot" className="size-3 shrink-0" />}
             attention={rollup(tree.pinned)}
             count={tree.pinned.length}
@@ -844,14 +855,14 @@ function MachineThreadTree({ activeThreadId, onNavigate }: PluginThreadListProps
 export default definePluginApp((app) => {
   app.slots.experimental_threadList({
     id: "machine-tree",
-    title: "Machine → Project",
-    description: "Threads grouped by the machine they run on, then by project.",
+    title: S.list.title,
+    description: S.list.description,
     component: MachineThreadList,
   });
   app.slots.settingsSection({
     id: "tags",
-    title: "Title tags",
-    description: "Colors for [Tag] prefixes in thread titles.",
+    title: S.tags.sectionTitle,
+    description: S.tags.sectionDescription,
     component: TagSettings,
   });
 });

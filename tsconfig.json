@@ -19,17 +19,25 @@
       ]
     },
     "noEmit": true,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "allowImportingTsExtensions": true
   },
   "include": [
-    "server.ts",
     "app.tsx",
-    "tree.ts",
-    "tags.ts",
-    "tag-rules.tsx",
-    "settings.tsx",
     "components",
+    "farcall-contract.ts",
+    "farcall-events.ts",
+    "farcall-reader.ts",
+    "farcall-tasks.tsx",
+    "farcall.test.ts",
+    "hierarchy-guides.tsx",
+    "inactive.tsx",
     "lib",
-    "inactive.tsx"
+    "server.ts",
+    "settings.tsx",
+    "strings.ts",
+    "tag-rules.tsx",
+    "tags.ts",
+    "tree.ts"
   ]
 }

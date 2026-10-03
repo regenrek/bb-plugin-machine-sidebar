@@ -31,6 +31,18 @@ several machines, for example a laptop and a remote Mac or Linux box.
 - **Sub-threads.** Child threads sit under their parent with a chevron to fold
   them. A folded parent shows how many it hides and still raises their status
   dot or spinner.
+- **Farcall worker tasks (optional).** If you run workers through
+  [farcall-mcp](https://github.com/regenrek/farcall-mcp) (`claude_worker` /
+  `codex_worker` `run` and `run_batch`), each coordinator thread lists its
+  worker tasks underneath: provider, model, task, elapsed call time and the
+  final outcome. The list is built only from bb's own tool-call events; it
+  never starts, retries or controls workers. While a batch call is open the
+  sidebar shows "Call open" rather than guessing per-worker progress. Turn it
+  on under Settings → Installed plugins → Machine Sidebar → Show Farcall tasks.
+  Works well with [split-orchestrator](https://github.com/regenrek/split-orchestrator).
+- **Hierarchy guides (optional).** Thin vertical lines through nested threads
+  and worker tasks, like an editor's file tree (Show hierarchy guides).
+- **Worktree marker.** Threads running in a git worktree show a small fork icon.
 - **Quick actions.** Hover a project for **+** (new thread in that project on
   that machine). Hover a thread for **Archive** and **…** (open in split,
   rename, pin, mark read/unread, mark inactive, delete).
@@ -58,7 +70,7 @@ Requires bb 0.44 or later.
 ```sh
 npm install
 npx tsc -p .                              # type check
-node --test tree.test.ts tags.test.ts     # unit tests
+npm test                                  # unit tests (node --test + vitest)
 bb plugin build                           # build dist/
 bb plugin install . --yes                 # install from this folder
 bb plugin dev                             # rebuild and reload on save
@@ -71,7 +83,10 @@ bb plugin dev                             # rebuild and reload on save
 | `tags.ts` | Title tag parsing, colors, rule cleanup |
 | `tag-rules.tsx`, `inactive.tsx` | Loading and live refresh of tag rules and inactive marks |
 | `settings.tsx` | Title tags settings page |
-| `server.ts` | Storage and RPC for tag rules and inactive marks |
+| `farcall-*.ts(x)` | Optional Farcall task projection from bb tool-call events |
+| `hierarchy-guides.tsx` | Optional tree guide lines |
+| `strings.ts` | Every user-visible text, so variants can translate one file |
+| `server.ts` | Settings, storage and RPC for tag rules, inactive marks and Farcall tasks |
 
 ## License
 

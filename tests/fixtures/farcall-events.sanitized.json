@@ -1,0 +1,2688 @@
+{
+ "source": "Real event shapes of codex_worker run/run_batch tool calls in a bb coordinator thread; all prompts and results replaced with neutral example text.",
+ "events": [
+  {
+   "id": "evt_2jahcqcfu9",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 931,
+   "createdAt": 1790918250763,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i69",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase1",
+      "tasks": [
+       {
+        "task_id": "w1-foundation",
+        "delegation_id": "tgb-w1-p1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-foundation: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-frontend",
+        "delegation_id": "tgb-w3-p1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w3-frontend: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_9yh57gyz4a",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 932,
+   "createdAt": 1790918250763,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i69",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase1",
+      "tasks": [
+       {
+        "task_id": "w1-foundation",
+        "delegation_id": "tgb-w1-p1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-foundation: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-frontend",
+        "delegation_id": "tgb-w3-p1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w3-frontend: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "failed",
+     "result": "Batch requires distinct, non-overlapping checkout and writable roots, including Git directory aliases",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_rqigee7j6q",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 943,
+   "createdAt": 1790918283905,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i72",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase1b",
+      "tasks": [
+       {
+        "task_id": "w1-foundation",
+        "delegation_id": "tgb-w1-p1b",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-foundation: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-frontend",
+        "delegation_id": "tgb-w3-p1b",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w3-frontend: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_463ab4qqzs",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 944,
+   "createdAt": 1790920403544,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i72",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase1b",
+      "tasks": [
+       {
+        "task_id": "w1-foundation",
+        "delegation_id": "tgb-w1-p1b",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-foundation: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-frontend",
+        "delegation_id": "tgb-w3-p1b",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w3-frontend: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-phase1b\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-foundation\", \"delegation_id\": \"tgb-w1-p1b\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p1b\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p1b/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-p1b\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T05:52:15.394Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 3824, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 4097502, \"cached_input_tokens\": 3953024, \"cache_write_input_tokens\": 0, \"output_tokens\": 54705, \"reasoning_output_tokens\": 15636}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p1b\", \"trace\": false}}, {\"task_id\": \"w3-frontend\", \"delegation_id\": \"tgb-w3-p1b\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p1b\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p1b/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-p1b\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T05:53:23.166Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1404, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 4157133, \"cached_input_tokens\": 3990016, \"cache_write_input_tokens\": 0, \"output_tokens\": 55200, \"reasoning_output_tokens\": 18236}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p1b\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-phase1b\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_a6e4wsj3iv",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1215,
+   "createdAt": 1790920617408,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i110",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase2",
+      "tasks": [
+       {
+        "task_id": "w1-hardening",
+        "delegation_id": "tgb-w1-p2",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p1b",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-hardening: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w2-runs",
+        "delegation_id": "tgb-w2-p2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w2-runs: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_gf6233sj9s",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1216,
+   "createdAt": 1790922851485,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i110",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase2",
+      "tasks": [
+       {
+        "task_id": "w1-hardening",
+        "delegation_id": "tgb-w1-p2",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p1b",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-hardening: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w2-runs",
+        "delegation_id": "tgb-w2-p2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w2-runs: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-phase2\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-hardening\", \"delegation_id\": \"tgb-w1-p2\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p2\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-p2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T06:34:11.159Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1647, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 7653458, \"cached_input_tokens\": 7314432, \"cache_write_input_tokens\": 0, \"output_tokens\": 98554, \"reasoning_output_tokens\": 35609}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p2\", \"trace\": false}}, {\"task_id\": \"w2-runs\", \"delegation_id\": \"tgb-w2-p2\", \"status\": \"completed\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p2\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w2-p2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T06:27:18.929Z\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2128, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 6307706, \"cached_input_tokens\": 6132864, \"cache_write_input_tokens\": 0, \"output_tokens\": 44005, \"reasoning_output_tokens\": 12865}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p2\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-phase2\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_xgsggavfit",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1304,
+   "createdAt": 1790922934798,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i123",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase3",
+      "tasks": [
+       {
+        "task_id": "w1-integration",
+        "delegation_id": "tgb-w1-p3",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-integration: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-fixes",
+        "delegation_id": "tgb-w3-p3",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p1b",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w3-fixes: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_k6g3cvmpi2",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1305,
+   "createdAt": 1790926214177,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i123",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase3",
+      "tasks": [
+       {
+        "task_id": "w1-integration",
+        "delegation_id": "tgb-w1-p3",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-integration: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-fixes",
+        "delegation_id": "tgb-w3-p3",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p1b",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w3-fixes: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-phase3\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-integration\", \"delegation_id\": \"tgb-w1-p3\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p3\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p3/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-p3\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T07:30:13.807Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2011, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 14849046, \"cached_input_tokens\": 14309504, \"cache_write_input_tokens\": 0, \"output_tokens\": 155567, \"reasoning_output_tokens\": 66227}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p3\", \"trace\": false}}, {\"task_id\": \"w3-fixes\", \"delegation_id\": \"tgb-w3-p3\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p3\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p3/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-p3\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T06:49:12.356Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 814, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 6216009, \"cached_input_tokens\": 5966976, \"cache_write_input_tokens\": 0, \"output_tokens\": 68441, \"reasoning_output_tokens\": 24750}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-p3\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-phase3\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_vhctkfts6s",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1932,
+   "createdAt": 1790926669078,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i272",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase4",
+      "tasks": [
+       {
+        "task_id": "w2-e2e-fixes",
+        "delegation_id": "tgb-w2-p4",
+        "resume_session_id": "01a0fb2f-ed10-7111-8008-067799fa91b5",
+        "resume_delegation_id": "tgb-w2-p2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w2-e2e-fixes: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-e2e-fixes",
+        "delegation_id": "tgb-w1-p4",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p3",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w1-e2e-fixes: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "review",
+        "delegation_id": "tgb-review-p4",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot4"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 20000,
+        "prompt": "Example task review: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_72ctgpv2ru",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t1"
+   },
+   "threadId": "thr_example0001",
+   "seq": 1933,
+   "createdAt": 1790927828803,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i272",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-phase4",
+      "tasks": [
+       {
+        "task_id": "w2-e2e-fixes",
+        "delegation_id": "tgb-w2-p4",
+        "resume_session_id": "01a0fb2f-ed10-7111-8008-067799fa91b5",
+        "resume_delegation_id": "tgb-w2-p2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w2-e2e-fixes: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-e2e-fixes",
+        "delegation_id": "tgb-w1-p4",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p3",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w1-e2e-fixes: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "review",
+        "delegation_id": "tgb-review-p4",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot4"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 20000,
+        "prompt": "Example task review: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-phase4\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w2-e2e-fixes\", \"delegation_id\": \"tgb-w2-p4\", \"status\": \"completed\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p4\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p4/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w2-p4\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T07:57:08.479Z\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1162, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 8453199, \"cached_input_tokens\": 8174592, \"cache_write_input_tokens\": 0, \"output_tokens\": 63091, \"reasoning_output_tokens\": 22122}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-p4\", \"trace\": false}}, {\"task_id\": \"w1-e2e-fixes\", \"delegation_id\": \"tgb-w1-p4\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p4\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p4/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-p4\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T07:51:07.784Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 860, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 17237604, \"cached_input_tokens\": 16608384, \"cache_write_input_tokens\": 0, \"output_tokens\": 171109, \"reasoning_output_tokens\": 71892}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-p4\", \"trace\": false}}, {\"task_id\": \"review\", \"delegation_id\": \"tgb-review-p4\", \"status\": \"completed\", \"session_id\": \"01a0fb8c-443f-7961-adc6-f07222b625a1\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-p4\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-p4/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-review-p4\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T07:47:33.666Z\", \"session_id\": \"01a0fb8c-443f-7961-adc6-f07222b625a1\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 4841, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 2337665, \"cached_input_tokens\": 2196992, \"cache_write_input_tokens\": 0, \"output_tokens\": 12417, \"reasoning_output_tokens\": 4187}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-p4\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-phase4\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_57md6jfe35",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 2025,
+   "createdAt": 1790927936287,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i290",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-round1",
+      "tasks": [
+       {
+        "task_id": "w2-round1",
+        "delegation_id": "tgb-w2-r1",
+        "resume_session_id": "01a0fb2f-ed10-7111-8008-067799fa91b5",
+        "resume_delegation_id": "tgb-w2-p4",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w2-round1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-round1",
+        "delegation_id": "tgb-w1-r1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p4",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w1-round1: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_654gg2779y",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 2026,
+   "createdAt": 1790929043314,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i290",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-round1",
+      "tasks": [
+       {
+        "task_id": "w2-round1",
+        "delegation_id": "tgb-w2-r1",
+        "resume_session_id": "01a0fb2f-ed10-7111-8008-067799fa91b5",
+        "resume_delegation_id": "tgb-w2-p4",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w2",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot2"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w2-round1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-round1",
+        "delegation_id": "tgb-w1-r1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-p4",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w1-round1: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-round1\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w2-round1\", \"delegation_id\": \"tgb-w2-r1\", \"status\": \"completed\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-r1\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-r1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w2-r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T08:17:22.795Z\", \"session_id\": \"01a0fb2f-ed10-7111-8008-067799fa91b5\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 883, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 10640152, \"cached_input_tokens\": 10287744, \"cache_write_input_tokens\": 0, \"output_tokens\": 83903, \"reasoning_output_tokens\": 32162}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w2/artifacts/farcall/tgb-w2-r1\", \"trace\": false}}, {\"task_id\": \"w1-round1\", \"delegation_id\": \"tgb-w1-r1\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-r1\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-r1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T08:11:50.209Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 869, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 18710403, \"cached_input_tokens\": 17822976, \"cache_write_input_tokens\": 0, \"output_tokens\": 185042, \"reasoning_output_tokens\": 80443}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-r1\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-round1\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_hbbyi5wz29",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 2052,
+   "createdAt": 1790929079684,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i298",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-r1",
+      "resume_session_id": "01a0fb8c-443f-7961-adc6-f07222b625a1",
+      "resume_delegation_id": "tgb-review-p4",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Recheck round 1. Verify the example findings and report what changed."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_737zmsnqfj",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 2055,
+   "createdAt": 1790929367421,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i298",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-r1",
+      "resume_session_id": "01a0fb8c-443f-7961-adc6-f07222b625a1",
+      "resume_delegation_id": "tgb-review-p4",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Recheck round 1. Verify the example findings and report what changed."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-review-r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T08:22:47.090Z\", \"session_id\": \"01a0fb8c-443f-7961-adc6-f07222b625a1\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 3637, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 4300759, \"cached_input_tokens\": 3963136, \"cache_write_input_tokens\": 0, \"output_tokens\": 18273, \"reasoning_output_tokens\": 6747}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-r1\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_9yd844azjg",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t6"
+   },
+   "threadId": "thr_example0001",
+   "seq": 3074,
+   "createdAt": 1790934846318,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i402",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-opinion-astra-1",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "read-only",
+      "timeout_seconds": 3600,
+      "max_result_chars": 12000,
+      "prompt_file": "artifacts/second-opinion/prompt.md"
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_jz7wjuq52w",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t6"
+   },
+   "threadId": "thr_example0001",
+   "seq": 3075,
+   "createdAt": 1790934846318,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i402",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-opinion-astra-1",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "read-only",
+      "timeout_seconds": 3600,
+      "max_result_chars": 12000,
+      "prompt_file": "artifacts/second-opinion/prompt.md"
+     },
+     "status": "failed",
+     "result": "Example worker result.",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_6uy3cce9y8",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t6"
+   },
+   "threadId": "thr_example0001",
+   "seq": 3083,
+   "createdAt": 1790934849752,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i406",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-opinion-astra-2",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "read-only",
+      "timeout_seconds": 3600,
+      "max_result_chars": 12000,
+      "prompt_file": "/Users/me/projects/example-app/artifacts/second-opinion/prompt.md"
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_zzmrcpbfe2",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t6"
+   },
+   "threadId": "thr_example0001",
+   "seq": 3123,
+   "createdAt": 1790934954921,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i406",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-opinion-astra-2",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "read-only",
+      "timeout_seconds": 3600,
+      "max_result_chars": 12000,
+      "prompt_file": "/Users/me/projects/example-app/artifacts/second-opinion/prompt.md"
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-opinion-astra-2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T09:55:54.804Z\", \"session_id\": \"01a0fc09-19c8-78d3-b640-b0ac47d3361e\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 4112, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 252953, \"cached_input_tokens\": 205696, \"cache_write_input_tokens\": 0, \"output_tokens\": 1760, \"reasoning_output_tokens\": 134}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-opinion-astra-2\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_nuxvtzm6ak",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4227,
+   "createdAt": 1790936342849,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i514",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseA",
+      "tasks": [
+       {
+        "task_id": "w1-v2a",
+        "delegation_id": "tgb-w1-v2a",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-r1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v2a",
+        "delegation_id": "tgb-w3-v2a",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p3",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-spike",
+        "delegation_id": "tgb-w4-spike",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 14000,
+        "prompt": "Example task w4-spike: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_e7t53mzenp",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4228,
+   "createdAt": 1790936342849,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i514",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseA",
+      "tasks": [
+       {
+        "task_id": "w1-v2a",
+        "delegation_id": "tgb-w1-v2a",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-r1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v2a",
+        "delegation_id": "tgb-w3-v2a",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p3",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-spike",
+        "delegation_id": "tgb-w4-spike",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 14000,
+        "prompt": "Example task w4-spike: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "failed",
+     "result": "{\"batch_id\": \"tgb-v2-phaseA\", \"provider\": \"codex\", \"status\": \"rejected\", \"tasks\": [{\"task_id\": \"w1-v2a\", \"delegation_id\": \"tgb-w1-v2a\", \"status\": \"not_started\", \"session_id\": \"unknown\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2a\", \"worker_result_file\": null, \"worker_result\": null}, {\"task_id\": \"w3-v2a\", \"delegation_id\": \"tgb-w3-v2a\", \"status\": \"not_started\", \"session_id\": \"unknown\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v2a\", \"worker_result_file\": null, \"worker_result\": null}, {\"task_id\": \"w4-spike\", \"delegation_id\": \"tgb-w4-spike\", \"status\": \"not_started\", \"session_id\": \"unknown\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-spike\", \"worker_result_file\": null, \"worker_result\": null}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v2-phaseA\", \"error\": \"Example worker result.\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_822g4tk2gg",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4261,
+   "createdAt": 1790936388854,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i520",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseA2",
+      "tasks": [
+       {
+        "task_id": "w1-v2a",
+        "delegation_id": "tgb-w1-v2a2",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-r1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v2a",
+        "delegation_id": "tgb-w3-v2a2",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p3",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-spike",
+        "delegation_id": "tgb-w4-spike2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 14000,
+        "prompt": "Example task w4-spike: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_ce2rzj3ue3",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4262,
+   "createdAt": 1790941116798,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i520",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseA2",
+      "tasks": [
+       {
+        "task_id": "w1-v2a",
+        "delegation_id": "tgb-w1-v2a2",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-r1",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v2a",
+        "delegation_id": "tgb-w3-v2a2",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-p3",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v2a: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-spike",
+        "delegation_id": "tgb-w4-spike2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 14000,
+        "prompt": "Example task w4-spike: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-v2-phaseA2\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-v2a\", \"delegation_id\": \"tgb-w1-v2a2\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2a2\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2a2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-v2a2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T11:38:36.570Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2559, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 30162007, \"cached_input_tokens\": 28691456, \"cache_write_input_tokens\": 0, \"output_tokens\": 289216, \"reasoning_output_tokens\": 132529}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2a2\", \"trace\": false}}, {\"task_id\": \"w3-v2a\", \"delegation_id\": \"tgb-w3-v2a2\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v2a2\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v2a2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-v2a2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T10:44:39.964Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1141, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 9838574, \"cached_input_tokens\": 9441792, \"cache_write_input_tokens\": 0, \"output_tokens\": 104589, \"reasoning_output_tokens\": 36541}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v2a2\", \"trace\": false}}, {\"task_id\": \"w4-spike\", \"delegation_id\": \"tgb-w4-spike2\", \"status\": \"completed\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-spike2\", \"worker_result_file\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-spike2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w4-spike2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T11:08:17.341Z\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 436, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 17978333, \"cached_input_tokens\": 17727360, \"cache_write_input_tokens\": 0, \"output_tokens\": 63836, \"reasoning_output_tokens\": 21247}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-spike2\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v2-phaseA2\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_ke8qet2hgd",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4512,
+   "createdAt": 1790941318682,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i538",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseB",
+      "tasks": [
+       {
+        "task_id": "w4-channels",
+        "delegation_id": "tgb-w4-b1",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-spike2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w4-channels: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-channels",
+        "delegation_id": "tgb-w1-b1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-v2a2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w1-channels: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-channels",
+        "delegation_id": "tgb-w3-b1",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-v2a2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-channels: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_nd78viyet2",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4513,
+   "createdAt": 1790943959065,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i538",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-phaseB",
+      "tasks": [
+       {
+        "task_id": "w4-channels",
+        "delegation_id": "tgb-w4-b1",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-spike2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w4-channels: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w1-channels",
+        "delegation_id": "tgb-w1-b1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-v2a2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w1-channels: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-channels",
+        "delegation_id": "tgb-w3-b1",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-v2a2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-channels: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-v2-phaseB\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w4-channels\", \"delegation_id\": \"tgb-w4-b1\", \"status\": \"completed\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-b1\", \"worker_result_file\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-b1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w4-b1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T12:20:30.084Z\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2264, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 23261532, \"cached_input_tokens\": 22770048, \"cache_write_input_tokens\": 0, \"output_tokens\": 119802, \"reasoning_output_tokens\": 36817}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-b1\", \"trace\": false}}, {\"task_id\": \"w1-channels\", \"delegation_id\": \"tgb-w1-b1\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-b1\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-b1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-b1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T12:25:58.198Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2706, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 36270284, \"cached_input_tokens\": 34597120, \"cache_write_input_tokens\": 0, \"output_tokens\": 346917, \"reasoning_output_tokens\": 158835}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-b1\", \"trace\": false}}, {\"task_id\": \"w3-channels\", \"delegation_id\": \"tgb-w3-b1\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-b1\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-b1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-b1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T12:07:41.374Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1217, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 13856300, \"cached_input_tokens\": 13134464, \"cache_write_input_tokens\": 0, \"output_tokens\": 141846, \"reasoning_output_tokens\": 52033}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-b1\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v2-phaseB\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_wr679wixfz",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4549,
+   "createdAt": 1790944026183,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i546",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-int2",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-b1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Example task tgb-w1-int2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_yf7pq5cpe6",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4550,
+   "createdAt": 1790946556523,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i546",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-int2",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-b1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Example task tgb-w1-int2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-int2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T13:09:16.113Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1101, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 41927168, \"cached_input_tokens\": 39867136, \"cache_write_input_tokens\": 0, \"output_tokens\": 399992, \"reasoning_output_tokens\": 182816}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-int2\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_mt2jsn9yfu",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4815,
+   "createdAt": 1790946814018,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i616",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-review",
+      "tasks": [
+       {
+        "task_id": "w3-f1",
+        "delegation_id": "tgb-w3-f1",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-b1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot3"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w3-f1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "review-v2",
+        "delegation_id": "tgb-review-v2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot4"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 20000,
+        "prompt": "Example task review-v2: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_iaijnzfapi",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4816,
+   "createdAt": 1790948101202,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i616",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-review",
+      "tasks": [
+       {
+        "task_id": "w3-f1",
+        "delegation_id": "tgb-w3-f1",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-b1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot3"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w3-f1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "review-v2",
+        "delegation_id": "tgb-review-v2",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot4"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 20000,
+        "prompt": "Example task review-v2: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-v2-review\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w3-f1\", \"delegation_id\": \"tgb-w3-f1\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-f1\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-f1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-f1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T13:35:00.701Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 788, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 17841946, \"cached_input_tokens\": 16953088, \"cache_write_input_tokens\": 0, \"output_tokens\": 169238, \"reasoning_output_tokens\": 67316}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-f1\", \"trace\": false}}, {\"task_id\": \"review-v2\", \"delegation_id\": \"tgb-review-v2\", \"status\": \"completed\", \"session_id\": \"01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-v2\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-v2/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-review-v2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T13:27:39.333Z\", \"session_id\": \"01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 5197, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 4718925, \"cached_input_tokens\": 4556160, \"cache_write_input_tokens\": 0, \"output_tokens\": 16219, \"reasoning_output_tokens\": 5456}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-v2\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v2-review\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_qsikarsf8a",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4839,
+   "createdAt": 1790948160598,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i621",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-round1",
+      "tasks": [
+       {
+        "task_id": "w1-r1",
+        "delegation_id": "tgb-w1-v2r1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-int2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w1-r1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-r1",
+        "delegation_id": "tgb-w4-v2r1",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-b1",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w4-r1: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_p5i5kpdjhh",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 4840,
+   "createdAt": 1790949377006,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i621",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v2-round1",
+      "tasks": [
+       {
+        "task_id": "w1-r1",
+        "delegation_id": "tgb-w1-v2r1",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-int2",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w1-r1: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-r1",
+        "delegation_id": "tgb-w4-v2r1",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-b1",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 8000,
+        "prompt": "Example task w4-r1: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-v2-round1\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-r1\", \"delegation_id\": \"tgb-w1-v2r1\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2r1\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2r1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-v2r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T13:52:23.518Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1032, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 43977424, \"cached_input_tokens\": 41809536, \"cache_write_input_tokens\": 0, \"output_tokens\": 418079, \"reasoning_output_tokens\": 191209}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v2r1\", \"trace\": false}}, {\"task_id\": \"w4-r1\", \"delegation_id\": \"tgb-w4-v2r1\", \"status\": \"completed\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v2r1\", \"worker_result_file\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v2r1/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w4-v2r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T13:56:16.663Z\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 815, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 26634120, \"cached_input_tokens\": 25931520, \"cache_write_input_tokens\": 0, \"output_tokens\": 143083, \"reasoning_output_tokens\": 49841}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v2r1\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v2-round1\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_3d5vdirgbr",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5016,
+   "createdAt": 1790949577406,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i669",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-v2r1",
+      "resume_session_id": "01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d",
+      "resume_delegation_id": "tgb-review-v2",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Example task tgb-review-v2r1: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_8qmfgt7i9q",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5017,
+   "createdAt": 1790950007958,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i669",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-v2r1",
+      "resume_session_id": "01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d",
+      "resume_delegation_id": "tgb-review-v2",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 12000,
+      "prompt": "Example task tgb-review-v2r1: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-review-v2r1\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T14:06:47.525Z\", \"session_id\": \"01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 4380, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 7502319, \"cached_input_tokens\": 7287424, \"cache_write_input_tokens\": 0, \"output_tokens\": 24805, \"reasoning_output_tokens\": 8361}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-v2r1\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_55pr6a89ca",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5033,
+   "createdAt": 1790950029669,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i673",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-spike",
+      "delegation_id": "tgb-w4-v2r2",
+      "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+      "resume_delegation_id": "tgb-w4-v2r1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/Users/me/projects/example-worktrees/tgb-w4",
+       "/tmp/bb-tgb-e2e/slot6"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-w4-v2r2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_qrec2h35sb",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5034,
+   "createdAt": 1790951276645,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i673",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-spike",
+      "delegation_id": "tgb-w4-v2r2",
+      "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+      "resume_delegation_id": "tgb-w4-v2r1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/Users/me/projects/example-worktrees/tgb-w4",
+       "/tmp/bb-tgb-e2e/slot6"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-w4-v2r2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w4-v2r2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T14:27:56.367Z\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 506, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 29370237, \"cached_input_tokens\": 28366080, \"cache_write_input_tokens\": 0, \"output_tokens\": 169736, \"reasoning_output_tokens\": 57919}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v2r2\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_xbasrgxc6w",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5052,
+   "createdAt": 1790951323250,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i678",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-v2r2",
+      "resume_session_id": "01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d",
+      "resume_delegation_id": "tgb-review-v2r1",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-review-v2r2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_9bdk9a6z9c",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da7b7c06ed-t11"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5053,
+   "createdAt": 1790951730648,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da7b7c06ed-i678",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-worktrees/tgb-review",
+      "delegation_id": "tgb-review-v2r2",
+      "resume_session_id": "01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d",
+      "resume_delegation_id": "tgb-review-v2r1",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot4"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-review-v2r2: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-review-v2r2\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T14:35:30.429Z\", \"session_id\": \"01a0fcbf-a6bd-7a63-8cf5-a3ac8feedf3d\", \"requested_model\": \"gpt-6-astra\", \"reported_model\": \"unknown\", \"requested_effort\": \"high\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2432, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 8484726, \"cached_input_tokens\": 8190848, \"cache_write_input_tokens\": 0, \"output_tokens\": 29761, \"reasoning_output_tokens\": 9002}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-review/artifacts/farcall/tgb-review-v2r2\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_xtqb7ecpys",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5898,
+   "createdAt": 1790959762457,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i76",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-v201",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-v2r1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-w1-v201: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_x7vmdk2x85",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t2"
+   },
+   "threadId": "thr_example0001",
+   "seq": 5899,
+   "createdAt": 1790961591287,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i76",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-v201",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-v2r1",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 8000,
+      "prompt": "Example task tgb-w1-v201: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-v201\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T17:19:51.077Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1035, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 49899946, \"cached_input_tokens\": 47545216, \"cache_write_input_tokens\": 0, \"output_tokens\": 460741, \"reasoning_output_tokens\": 213926}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v201\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_856gnj2nsf",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t8"
+   },
+   "threadId": "thr_example0001",
+   "seq": 7096,
+   "createdAt": 1790965104087,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i180",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v21-phaseA",
+      "tasks": [
+       {
+        "task_id": "w1-v21",
+        "delegation_id": "tgb-w1-v21a",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-v201",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v21",
+        "delegation_id": "tgb-w3-v21a",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-f1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot3"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-v21",
+        "delegation_id": "tgb-w4-v21a",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-v2r2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w4-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w5-sidebar",
+        "delegation_id": "tgb-w5-a",
+        "cwd": "/Users/me/projects/example-ui",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot8"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w5-sidebar: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_t36sr53vbp",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t8"
+   },
+   "threadId": "thr_example0001",
+   "seq": 7097,
+   "createdAt": 1790969096228,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i180",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run_batch",
+     "arguments": {
+      "batch_id": "tgb-v21-phaseA",
+      "tasks": [
+       {
+        "task_id": "w1-v21",
+        "delegation_id": "tgb-w1-v21a",
+        "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+        "resume_delegation_id": "tgb-w1-v201",
+        "cwd": "/Users/me/projects/example-app",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot1"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 12000,
+        "prompt": "Example task w1-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w3-v21",
+        "delegation_id": "tgb-w3-v21a",
+        "resume_session_id": "01a0fb0c-5033-79a3-8272-2ee4bf675f0b",
+        "resume_delegation_id": "tgb-w3-f1",
+        "cwd": "/Users/me/projects/example-worktrees/tgb-w3",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot3"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w3-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w4-v21",
+        "delegation_id": "tgb-w4-v21a",
+        "resume_session_id": "01a0fc20-946d-7df1-9612-9db961ed7cd9",
+        "resume_delegation_id": "tgb-w4-v2r2",
+        "cwd": "/Users/me/projects/example-spike",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/Users/me/projects/example-worktrees/tgb-w4",
+         "/tmp/bb-tgb-e2e/slot6"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w4-v21: implement the assigned slice, run the checks and report the result."
+       },
+       {
+        "task_id": "w5-sidebar",
+        "delegation_id": "tgb-w5-a",
+        "cwd": "/Users/me/projects/example-ui",
+        "model": "gpt-6.1-sol",
+        "effort": "xhigh",
+        "sandbox": "workspace-write",
+        "network_access": true,
+        "writable_roots": [
+         "/tmp/bb-tgb-e2e/slot8"
+        ],
+        "allow_non_git": false,
+        "timeout_seconds": 7100,
+        "max_result_chars": 10000,
+        "prompt": "Example task w5-sidebar: implement the assigned slice, run the checks and report the result."
+       }
+      ]
+     },
+     "status": "completed",
+     "result": "{\"batch_id\": \"tgb-v21-phaseA\", \"provider\": \"codex\", \"status\": \"completed\", \"tasks\": [{\"task_id\": \"w1-v21\", \"delegation_id\": \"tgb-w1-v21a\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v21a\", \"worker_result_file\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v21a/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-v21a\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T19:24:56.061Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 2147, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 61438243, \"cached_input_tokens\": 58552320, \"cache_write_input_tokens\": 0, \"output_tokens\": 550113, \"reasoning_output_tokens\": 258145}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v21a\", \"trace\": false}}, {\"task_id\": \"w3-v21\", \"delegation_id\": \"tgb-w3-v21a\", \"status\": \"completed\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v21a\", \"worker_result_file\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v21a/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w3-v21a\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T18:54:48.473Z\", \"session_id\": \"01a0fb0c-5033-79a3-8272-2ee4bf675f0b\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1150, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 22960140, \"cached_input_tokens\": 21721600, \"cache_write_input_tokens\": 0, \"output_tokens\": 222024, \"reasoning_output_tokens\": 88832}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-worktrees/tgb-w3/artifacts/farcall/tgb-w3-v21a\", \"trace\": false}}, {\"task_id\": \"w4-v21\", \"delegation_id\": \"tgb-w4-v21a\", \"status\": \"completed\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v21a\", \"worker_result_file\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v21a/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w4-v21a\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T18:44:33.549Z\", \"session_id\": \"01a0fc20-946d-7df1-9612-9db961ed7cd9\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 735, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 36166029, \"cached_input_tokens\": 34950912, \"cache_write_input_tokens\": 0, \"output_tokens\": 211665, \"reasoning_output_tokens\": 75951}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-spike/artifacts/farcall/tgb-w4-v21a\", \"trace\": false}}, {\"task_id\": \"w5-sidebar\", \"delegation_id\": \"tgb-w5-a\", \"status\": \"completed\", \"session_id\": \"01a0fdd6-be64-7250-925a-3876b52136d3\", \"evidence_directory\": \"/Users/me/projects/example-ui/artifacts/farcall/tgb-w5-a\", \"worker_result_file\": \"/Users/me/projects/example-ui/artifacts/farcall/tgb-w5-a/completion.json\", \"worker_result\": {\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w5-a\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T18:48:03.847Z\", \"session_id\": \"01a0fdd6-be64-7250-925a-3876b52136d3\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 746, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 9659409, \"cached_input_tokens\": 9418240, \"cache_write_input_tokens\": 0, \"output_tokens\": 43417, \"reasoning_output_tokens\": 14041}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-ui/artifacts/farcall/tgb-w5-a\", \"trace\": false}}], \"evidence_directory\": \"/Users/me/.local/state/farcall/batches/codex/tgb-v21-phaseA\"}",
+     "presentation": {
+      "label": {
+       "pending": "Running run_batch",
+       "completed": "Ran run_batch"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_us375d9zgp",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t8"
+   },
+   "threadId": "thr_example0001",
+   "seq": 7125,
+   "createdAt": 1790969255394,
+   "type": "item/started",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i187",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-v21int",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-v21a",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 10000,
+      "prompt": "Example task tgb-w1-v21int: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "pending",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  },
+  {
+   "id": "evt_z5qz9pcvmc",
+   "scope": {
+    "kind": "turn",
+    "turnId": "da0f83d340-t8"
+   },
+   "threadId": "thr_example0001",
+   "seq": 7127,
+   "createdAt": 1790971434958,
+   "type": "item/completed",
+   "data": {
+    "item": {
+     "type": "toolCall",
+     "id": "da0f83d340-i187",
+     "server": "plugin_codex-worker_codex_worker",
+     "tool": "run",
+     "arguments": {
+      "cwd": "/Users/me/projects/example-app",
+      "delegation_id": "tgb-w1-v21int",
+      "resume_session_id": "01a0fb0c-5033-76f2-9ad6-2bff552c847a",
+      "resume_delegation_id": "tgb-w1-v21a",
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh",
+      "sandbox": "workspace-write",
+      "network_access": true,
+      "writable_roots": [
+       "/tmp/bb-tgb-e2e/slot1"
+      ],
+      "timeout_seconds": 7100,
+      "max_result_chars": 10000,
+      "prompt": "Example task tgb-w1-v21int: implement the assigned slice, run the checks and report the result."
+     },
+     "status": "completed",
+     "result": "{\"bridge_version\": \"0.1.7\", \"provider\": \"codex\", \"delegation_id\": \"tgb-w1-v21int\", \"status\": \"completed\", \"exit_code\": 0, \"exit_signal\": null, \"stdout_truncated\": false, \"stderr_truncated\": false, \"completed_at\": \"2026-10-02T20:03:54.739Z\", \"session_id\": \"01a0fb0c-5033-76f2-9ad6-2bff552c847a\", \"requested_model\": \"gpt-6.1-sol\", \"reported_model\": \"unknown\", \"requested_effort\": \"xhigh\", \"permission_denials\": [], \"permission_denials_count\": 0, \"result_truncated\": false, \"result_file\": null, \"result_characters\": 1719, \"result\": \"Example worker result.\", \"native_usage\": {\"input_tokens\": 70435834, \"cached_input_tokens\": 67306624, \"cache_write_input_tokens\": 0, \"output_tokens\": 602490, \"reasoning_output_tokens\": 285214}, \"native_model_usage\": null, \"native_total_cost_usd\": null, \"usage_note\": \"Raw provider fields. Missing values are unknown; resumed totals may be cumulative. No API cost estimate is made.\", \"evidence_directory\": \"/Users/me/projects/example-app/artifacts/farcall/tgb-w1-v21int\", \"trace\": false}",
+     "presentation": {
+      "label": {
+       "pending": "Running run",
+       "completed": "Ran run"
+      },
+      "icon": {
+       "glyph": "Toolbox"
+      },
+      "title": "plugin_codex-worker_codex_worker"
+     }
+    }
+   }
+  }
+ ]
+}

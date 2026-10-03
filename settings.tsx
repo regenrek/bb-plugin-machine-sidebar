@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { S } from "./strings";
 import { useTagRules } from "./tag-rules";
 import {
   autoColorId,
@@ -71,7 +72,7 @@ function TagSettings() {
   if (rules === null) {
     return (
       <p className="text-sm text-muted-foreground">
-        {error === null ? "Loading tags…" : `Could not load tags: ${error}`}
+        {error === null ? S.tags.loading : S.tags.loadError(error)}
       </p>
     );
   }
@@ -122,8 +123,8 @@ function TagSettings() {
                 <Input
                   value={rule.tag}
                   maxLength={MAX_TAG_LENGTH + 2}
-                  placeholder="Tag name"
-                  aria-label="Tag name"
+                  placeholder={S.tags.tagName}
+                  aria-label={S.tags.tagName}
                   aria-invalid={isDuplicate || undefined}
                   onChange={(event) => update(index, { tag: event.target.value })}
                   className={cn("h-8 w-40", isDuplicate && "border-destructive")}
@@ -137,7 +138,7 @@ function TagSettings() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label={`Remove ${tag || "tag"}`}
+                  aria-label={S.tags.remove(tag)}
                   onClick={() => {
                     setStatus("idle");
                     setDraft((current) => current.filter((_, i) => i !== index));

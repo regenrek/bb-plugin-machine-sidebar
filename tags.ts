@@ -4,6 +4,8 @@
 // from a stable hash of the tag name. Kept free of React and the SDK runtime
 // so it can be tested with plain Node and shared by server and app.
 
+import { S } from "./strings.ts";
+
 export interface TitleTags {
   tags: string[];
   rest: string;
@@ -33,15 +35,15 @@ export function parseTitleTags(title: string): TitleTags {
 
 /** Mid-tone hues that stay readable on both light and dark sidebars. */
 export const TAG_PALETTE = [
-  { id: "red", label: "Red", hex: "#e5484d" },
-  { id: "orange", label: "Orange", hex: "#f76b15" },
-  { id: "amber", label: "Amber", hex: "#d6a100" },
-  { id: "green", label: "Green", hex: "#30a46c" },
-  { id: "teal", label: "Teal", hex: "#12a594" },
-  { id: "blue", label: "Blue", hex: "#0090ff" },
-  { id: "violet", label: "Violet", hex: "#8e4ec6" },
-  { id: "pink", label: "Pink", hex: "#d6409f" },
-  { id: "gray", label: "Gray", hex: "#8b8d98" },
+  { id: "red", label: S.tags.colors.red, hex: "#e5484d" },
+  { id: "orange", label: S.tags.colors.orange, hex: "#f76b15" },
+  { id: "amber", label: S.tags.colors.amber, hex: "#d6a100" },
+  { id: "green", label: S.tags.colors.green, hex: "#30a46c" },
+  { id: "teal", label: S.tags.colors.teal, hex: "#12a594" },
+  { id: "blue", label: S.tags.colors.blue, hex: "#0090ff" },
+  { id: "violet", label: S.tags.colors.violet, hex: "#8e4ec6" },
+  { id: "pink", label: S.tags.colors.pink, hex: "#d6409f" },
+  { id: "gray", label: S.tags.colors.gray, hex: "#8b8d98" },
 ] as const;
 
 export type TagColorId = (typeof TAG_PALETTE)[number]["id"];

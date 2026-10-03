@@ -2,9 +2,13 @@
 //
 // Stores the tag color rules edited on the plugin's settings page and the
 // threads/projects marked inactive, and tells every open window when either
-// changes. The sidebar itself is frontend-only (see app.tsx).
+// changes. The optional Farcall projection reads existing BB thread events;
+// rendering and native thread actions stay in app.tsx.
 import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
 import { z } from "zod";
+import { FARCALL_CHANGED, FARCALL_SETTING, farcallSnapshotSchema } from "./farcall-contract";
+import { createFarcallReader } from "./farcall-reader";
+import { HIERARCHY_GUIDES_SETTING } from "./tree";
 import {
   INACTIVE_CHANGED,
   MAX_TAG_LENGTH,
@@ -28,6 +32,10 @@ const marksSchema = z.object({
 type InactiveMarks = z.infer<typeof marksSchema>;
 
 export const rpcContract = defineRpcContract({
+  farcall_tasks_get: {
+    input: z.object({ threadId: z.string().min(1).max(128) }),
+    output: farcallSnapshotSchema,
+  },
   inactive_get: {
     input: z.null(),
     output: marksSchema,
@@ -57,6 +65,22 @@ const MAX_MARKS = 2000;
 
 export default async function plugin(bb: BbPluginApi) {
   bb.log.info("loaded");
+  const settings = bb.settings.define({
+    [FARCALL_SETTING]: {
+      type: "boolean", default: false, label: "Show Farcall tasks",
+      description: "Lists Claude and Codex worker calls under their coordinator. Never starts, retries or controls workers.",
+    },
+    [HIERARCHY_GUIDES_SETTING]: {
+      type: "boolean", default: false, label: "Show hierarchy guides",
+      description: "Draws thin vertical lines through nested threads and Farcall tasks.",
+    },
+  });
+  const farcall = createFarcallReader((args) => bb.sdk.threads.events.list(args));
+  settings.onChange((next) => { if (!next.showFarcallTasks) farcall.clear(); });
+  bb.events.on("experimental_thread.events", async ({ thread, sequence }) => {
+    if ((await settings.get()).showFarcallTasks) bb.realtime.publish(FARCALL_CHANGED, { threadId: thread.id, sequence });
+  });
+  bb.events.on("thread.deleted", ({ thread }) => { farcall.clearThread(thread.id); });
 
   const readRules = async (): Promise<TagRule[]> => {
     const stored = z.array(tagRuleSchema).safeParse(await bb.storage.kv.get(TAG_RULES_KEY));
@@ -76,6 +100,10 @@ export default async function plugin(bb: BbPluginApi) {
     );
 
   bb.rpc.register(rpcContract, {
+    farcall_tasks_get: async ({ threadId }) =>
+      (await settings.get()).showFarcallTasks
+        ? farcallSnapshotSchema.parse(await farcall.read(threadId))
+        : { tasks: [] },
     inactive_get: () => readMarks(),
     inactive_set: async ({ kind, id, inactive }) => {
       const marks = await readMarks();

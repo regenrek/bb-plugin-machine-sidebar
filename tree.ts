@@ -12,6 +12,8 @@
 // attention again or something new happened in it after it was marked
 // (`latestAttentionAt` is newer than the mark); merely reading it does not.
 
+import { S } from "./strings.ts";
+
 export interface TreeThread {
   id: string;
   projectId: string;
@@ -78,7 +80,10 @@ export interface Tree<T extends TreeThread> {
   machines: MachineGroup<T>[];
 }
 
-export const PERSONAL_GROUP_NAME = "Threads";
+/** Plugin setting: thin vertical guides through nested threads, like an editor's file tree. */
+export const HIERARCHY_GUIDES_SETTING = "showHierarchyGuides";
+
+export const PERSONAL_GROUP_NAME = S.groups.personal;
 const NO_MACHINE = "no-machine";
 
 /** "Ada’s MacBook Pro" → "Ada"; other names stay as they are. */
@@ -168,7 +173,7 @@ function projectGroups<T extends TreeThread>(
     return {
       key: `${keyPrefix}${machineKey}/${projectId}`,
       projectId,
-      name: isPersonal ? PERSONAL_GROUP_NAME : (project?.name ?? "Unknown project"),
+      name: isPersonal ? PERSONAL_GROUP_NAME : (project?.name ?? S.groups.unknownProject),
       isPersonal,
       rows: nestRows(list),
     };
@@ -221,7 +226,7 @@ export function buildTree<T extends TreeThread>(
   }
 
   const machines: MachineGroup<T>[] = [...byMachine.entries()].map(([key, machine]) => {
-    const fullName = machine.host?.name ?? "No machine";
+    const fullName = machine.host?.name ?? S.groups.noMachine;
     return {
       key,
       hostId: machine.host?.id ?? null,
