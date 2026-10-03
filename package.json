@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-machine-sidebar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "bb thread list grouped by machine, then project, with title tag pills, an inactive group and optional Farcall worker tasks.",
   "license": "MIT",
   "author": "Kevin Kern",

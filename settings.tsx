@@ -105,14 +105,15 @@ function TagSettings() {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        Start a thread title with <code className="rounded bg-muted px-1">[Tag]</code> to show it as
-        a pill in the sidebar, e.g. <code className="rounded bg-muted px-1">[Bug] Login fails</code>.
-        Tags listed here use the color you pick; other tags get an automatic color. Matching ignores
-        upper and lower case.
+        {S.tags.introStart}
+        <code className="rounded bg-muted px-1">{S.tags.introExampleTag}</code>
+        {S.tags.introMiddle}
+        <code className="rounded bg-muted px-1">{S.tags.introExampleTitle}</code>
+        {S.tags.introEnd}
       </p>
 
       {draft.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No tag colors yet.</p>
+        <p className="text-sm text-muted-foreground">{S.tags.empty}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {draft.map((rule, index) => {
@@ -148,7 +149,7 @@ function TagSettings() {
                 </Button>
                 {isDuplicate && (
                   <span className="w-full text-xs text-destructive-text">
-                    “{tag}” is listed twice; only the first entry is used.
+                    {S.tags.duplicate(tag)}
                   </span>
                 )}
               </li>
@@ -168,19 +169,19 @@ function TagSettings() {
           }}
         >
           <Icon name="Plus" fallback="Dot" />
-          Add tag
+          {S.tags.add}
         </Button>
         <Button size="sm" disabled={!dirty || status === "saving"} onClick={() => void onSave()}>
-          {status === "saving" ? "Saving…" : "Save"}
+          {status === "saving" ? S.tags.saving : S.tags.save}
         </Button>
         {dirty && status !== "saving" && (
           <Button variant="ghost" size="sm" onClick={() => setDraft(rules)}>
-            Discard
+            {S.tags.discard}
           </Button>
         )}
         <span role="status" className="text-xs text-muted-foreground">
-          {status === "saved" && !dirty ? "Saved. Open windows update right away." : null}
-          {status === "failed" ? <span className="text-destructive-text">Could not save: {saveError}</span> : null}
+          {status === "saved" && !dirty ? S.tags.saved : null}
+          {status === "failed" ? <span className="text-destructive-text">{S.tags.saveError(saveError ?? "")}</span> : null}
         </span>
       </div>
     </div>
