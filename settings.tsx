@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { S } from "./strings";
+import { LanguageProvider, useStrings } from "./i18n";
 import { useTagRules } from "./tag-rules";
 import {
   autoColorId,
@@ -37,16 +37,17 @@ function ColorSwatches({
   onChange: (color: TagColorId) => void;
   tag: string;
 }) {
+  const S = useStrings();
   return (
-    <div role="radiogroup" aria-label={`Color for ${tag || "new tag"}`} className="flex gap-1">
+    <div role="radiogroup" aria-label={S.tags.colorFor(tag)} className="flex gap-1">
       {TAG_PALETTE.map((color) => (
         <button
           key={color.id}
           type="button"
           role="radio"
           aria-checked={value === color.id}
-          aria-label={color.label}
-          title={color.label}
+          aria-label={S.tags.colors[color.id]}
+          title={S.tags.colors[color.id]}
           onClick={() => onChange(color.id)}
           style={{ background: color.hex }}
           className={cn(
@@ -60,6 +61,7 @@ function ColorSwatches({
 }
 
 function TagSettings() {
+  const S = useStrings();
   const { rules, error, save } = useTagRules();
   const [draft, setDraft] = useState<TagRule[]>([]);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed">("idle");
@@ -188,4 +190,10 @@ function TagSettings() {
   );
 }
 
-export default TagSettings;
+export default function TagSettingsSection() {
+  return (
+    <LanguageProvider>
+      <TagSettings />
+    </LanguageProvider>
+  );
+}

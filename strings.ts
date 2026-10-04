@@ -1,104 +1,38 @@
-// Every user-visible text of Machine Sidebar in one place. A variant of this
-// plugin (for example a translated fork) replaces only this file, so merges
-// from upstream do not conflict in the code that uses the texts.
+// Every user-visible text of Machine Sidebar, one file per language:
+// strings/en.ts (the default, and the source of the `Strings` shape) and
+// strings/de.ts. The `language` plugin setting picks one (see i18n.tsx).
+//
+// Downstream forks that need their own texts add their own keys to BOTH
+// languages (en.ts, then de.ts, which is typed as the English shape, so a
+// missing key fails `npm run typecheck`) and leave this file and the code that
+// uses the texts alone. That keeps merges from upstream conflict-free: upstream
+// edits existing keys, a fork only adds new ones. To add a language, create
+// strings/<code>.ts typed as `Strings` and register it in LANGUAGES below.
+import { de } from "./strings/de.ts";
+import { en, type Strings } from "./strings/en.ts";
 
-const plural = (count: number, one: string, many: string) => (count === 1 ? one : many);
+export type { Strings };
 
-export const S = {
-  workerWorkspace: {
-    branch: (branch: string) => `Worktree branch: ${branch}`,
-    folder: (name: string) => `Working folder: ${name} (from task path; branch unknown)`,
-    detached: (name: string) => `Worktree: ${name} (branch unavailable)`,
-  },
-  list: {
-    title: "Machine → Project",
-    description: "Threads grouped by the machine they run on, then by project.",
-    label: "Threads by machine",
-    loading: "Loading threads…",
-    loadError: "Could not load threads.",
-    empty: "No threads yet.",
-  },
-  groups: {
-    personal: "Threads",
-    unknownProject: "Unknown project",
-    noMachine: "No machine",
-    pinned: "Pinned",
-    inactive: "Inactive",
-  },
-  status: {
-    agentWorking: "Agent is working",
-    subThreadAgentWorking: "A sub-thread's agent is working",
-    subThreadAttention: (kind: "waiting" | "failed" | "done") =>
-      `A sub-thread ${kind === "waiting" ? "needs your input" : kind === "failed" ? "failed" : "finished"}`,
-    worktree: "Worktree",
-    worktreeTitle: "Git worktree",
-    activity: (count: number, one: string, many: string) => `${count} ${plural(count, one, many)} running`,
-  },
-  activity: {
-    backgroundAgents: ["subagent", "subagents"],
-    backgroundCommands: ["background command", "background commands"],
-    workflows: ["workflow", "workflows"],
-    planMode: ["plan in progress", "plans in progress"],
-    goals: ["goal", "goals"],
-  },
-  subThreads: {
-    count: (count: number) => `${count} ${plural(count, "sub-thread", "sub-threads")}`,
-    toggle: (collapsed: boolean, count: number) =>
-      `${collapsed ? "Show" : "Hide"} ${count} ${plural(count, "sub-thread", "sub-threads")}`,
-  },
-  row: {
-    actions: "Thread actions",
-    titleInput: "Thread title",
-    archive: "Archive",
-    archiveThread: "Archive thread",
-    newThreadIn: (project: string, machine: string) => `New thread in ${project} on ${machine}`,
-  },
-  menu: {
-    split: "Open in split",
-    rename: "Rename",
-    pin: "Pin",
-    unpin: "Unpin",
-    markRead: "Mark as read",
-    markUnread: "Mark as unread",
-    markActive: "Mark active",
-    markInactive: "Mark inactive",
-    markProjectActive: "Mark project active",
-    markProjectInactive: "Mark project inactive",
-    markAllActive: "Mark all active",
-    archive: "Archive",
-    delete: "Delete…",
-  },
-  tags: {
-    sectionTitle: "Title tags",
-    sectionDescription: "Colors for [Tag] prefixes in thread titles.",
-    loading: "Loading tags…",
-    loadError: (error: string) => `Could not load tags: ${error}`,
-    tagName: "Tag name",
-    introStart: "Start a thread title with ",
-    introExampleTag: "[Tag]",
-    introMiddle: " to show it as a pill in the sidebar, e.g. ",
-    introExampleTitle: "[Bug] Login fails",
-    introEnd:
-      ". Tags listed here use the color you pick; other tags get an automatic color. Matching ignores upper and lower case.",
-    empty: "No tag colors yet.",
-    duplicate: (tag: string) => `“${tag}” is listed twice; only the first entry is used.`,
-    add: "Add tag",
-    save: "Save",
-    saving: "Saving…",
-    discard: "Discard",
-    saved: "Saved. Open windows update right away.",
-    saveError: (error: string) => `Could not save: ${error}`,
-    remove: (tag: string) => `Remove ${tag || "tag"}`,
-    colors: {
-      red: "Red",
-      orange: "Orange",
-      amber: "Amber",
-      green: "Green",
-      teal: "Teal",
-      blue: "Blue",
-      violet: "Violet",
-      pink: "Pink",
-      gray: "Gray",
-    },
-  },
-} as const;
+/** Plugin setting that picks the language of every text below. */
+export const LANGUAGE_SETTING = "language";
+/** Selectable values: a language code, or "auto" (browser language, else English). */
+export const LANGUAGE_OPTIONS = ["en", "de", "auto"];
+export const DEFAULT_LANGUAGE = "en";
+
+export const LANGUAGES = { en, de } as const satisfies Record<string, Strings>;
+export type Language = keyof typeof LANGUAGES;
+
+/**
+ * The texts for a stored setting value. Unknown or missing values give English;
+ * "auto" follows `browserLanguage` (for example `navigator.language`).
+ * Returns one of the module-level objects, so the result is referentially stable.
+ */
+export function resolveStrings(setting: unknown, browserLanguage?: string): Strings {
+  const language = setting === "auto" ? browserLanguage?.toLowerCase().split("-")[0] : setting;
+  return typeof language === "string" && Object.hasOwn(LANGUAGES, language)
+    ? LANGUAGES[language as Language]
+    : en;
+}
+
+/** English texts: the default, and for places that cannot react to the setting. */
+export const ENGLISH: Strings = en;

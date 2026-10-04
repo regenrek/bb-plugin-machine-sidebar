@@ -57,6 +57,15 @@ several machines, for example a laptop and a remote Mac or Linux box.
 Tag colors and inactive marks are stored on the bb server, so every window and
 machine sees the same state. Collapsed groups are remembered per window.
 
+## Language
+
+The sidebar speaks English (default) or German. Choose under Settings →
+Installed plugins → Machine Sidebar → Language: `en`, `de`, or `auto`, which
+follows the browser language and falls back to English. The labels bb itself
+shows for this plugin (its name in Settings → Appearance and the Title tags
+heading) stay English. To add a language, create `strings/<code>.ts` typed as
+`Strings` and register it in `strings.ts`.
+
 ## Install
 
 From the bb plugin marketplace, or:
@@ -90,7 +99,8 @@ bb plugin dev                             # rebuild and reload on save
 | `settings.tsx` | Title tags settings page |
 | `farcall-*.ts(x)` | Optional Farcall task projection from bb tool-call events |
 | `hierarchy-guides.tsx` | Optional tree guide lines |
-| `strings.ts` | Every user-visible text, so variants can translate one file |
+| `strings.ts`, `strings/en.ts`, `strings/de.ts` | Every user-visible text, one file per language; forks add their own keys to both |
+| `i18n.tsx` | Picks the language from the setting and shares it with the components |
 | `server.ts` | Settings, storage and RPC for tag rules, inactive marks and Farcall tasks |
 
 ## License

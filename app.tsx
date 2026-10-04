@@ -23,7 +23,8 @@ import { useInactiveMarks, type SetInactive } from "./inactive";
 import TagSettings from "./settings";
 import { TagColorProvider, useTagColor } from "./tag-rules";
 import { parseTitleTags } from "./tags";
-import { S } from "./strings";
+import { LANGUAGES } from "./strings";
+import { LanguageProvider, useStrings } from "./i18n";
 import { FARCALL_SETTING } from "./farcall-contract";
 import { FarcallTasks } from "./farcall-tasks";
 import { HierarchyGuides, useHierarchyGuides } from "./hierarchy-guides";
@@ -158,13 +159,14 @@ function StatusGlyph({
   thread: SidebarThread;
   hidden?: readonly SidebarThread[];
 }) {
+  const S = useStrings();
   const { hasUnsubmittedDraft } = useSidebarThreadDraft(thread.id);
   const attention = mostUrgent([thread, ...hidden]);
   const ownAttention = attentionOf(thread);
   if (attention !== null) {
     const label =
       ownAttention === attention
-        ? (thread.indicatorLabel ?? attention)
+        ? (thread.indicatorLabel ?? S.status.attention[attention])
         : S.status.subThreadAttention(attention);
     return <Dot kind={attention} label={label} />;
   }
@@ -191,6 +193,7 @@ const ACTIVITY = [
 ] as const;
 
 function ActivityGlyphs({ thread }: { thread: SidebarThread }) {
+  const S = useStrings();
   const running = ACTIVITY.filter((item) => thread.activity[item.key] > 0);
   if (running.length === 0) return null;
   return (
@@ -219,6 +222,7 @@ interface MenuItem {
 }
 
 function RowMenu({ items }: { items: MenuItem[] }) {
+  const S = useStrings();
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -303,6 +307,7 @@ function RenameInput({
   initial: string;
   onDone: (title: string | null) => void;
 }) {
+  const S = useStrings();
   const [value, setValue] = useState(initial);
   const finish = (title: string | null) => onDone(title?.trim() ? title.trim() : null);
   return (
@@ -398,6 +403,7 @@ function ThreadRow({
   /** Threads folded under this row while its children are collapsed. */
   hiddenDescendants?: readonly SidebarThread[];
 }) {
+  const S = useStrings();
   const { thread, depth } = row;
   const { marks, setInactive } = useContext(InactiveContext);
   const shortcut = useSidebarThreadShortcut(thread.id);
@@ -484,7 +490,7 @@ function ThreadRow({
           <TitleLine thread={thread} />
           {branch !== null && (
             <span
-              title={thread.environment?.isWorktree ? `${branch} (worktree)` : branch}
+              title={S.row.branchTitle(branch, thread.environment?.isWorktree === true)}
               className="flex min-w-0 items-center gap-1 text-[11px] font-normal leading-4 text-muted-foreground"
             >
               <Icon name="GitBranch" fallback="Code" className="size-3 shrink-0" />
@@ -622,6 +628,7 @@ function ProjectSection({
   onNavigate: () => void;
   inInactive?: boolean;
 }) {
+  const S = useStrings();
   const key = `p:${project.key}`;
   const isCollapsed = collapsed.has(key);
   const { marks, setInactive } = useContext(InactiveContext);
@@ -713,6 +720,7 @@ function InactiveSection({
   actions: Actions;
   onNavigate: () => void;
 }) {
+  const S = useStrings();
   // Stored as "open" so a new machine's inactive group starts collapsed.
   const openKey = `inactive-open:${machine.key}`;
   const isCollapsed = !collapsed.has(openKey);
@@ -751,23 +759,26 @@ function InactiveSection({
 
 // ---------------------------------------------------------------- list
 
-function MachineThreadList(props: PluginThreadListProps) {
+export function MachineThreadList(props: PluginThreadListProps) {
   return (
-    <TagColorProvider>
-      <MachineThreadTree {...props} />
-    </TagColorProvider>
+    <LanguageProvider>
+      <TagColorProvider>
+        <MachineThreadTree {...props} />
+      </TagColorProvider>
+    </LanguageProvider>
   );
 }
 
 function MachineThreadTree({ activeThreadId, onNavigate }: PluginThreadListProps) {
+  const S = useStrings();
   const { status, threads, projects } = experimental_useSidebarThreads();
   const actions = experimental_useSidebarThreadActions();
   const { collapsed, toggle } = useCollapsed();
   const inactive = useInactiveMarks();
   const tree = useMemo(
     () =>
-      buildTree(threads, projects, { inactive: inactive.marks, needsAttention: isWaitingForUser }),
-    [threads, projects, inactive.marks],
+      buildTree(threads, projects, { inactive: inactive.marks, needsAttention: isWaitingForUser, groups: S.groups }),
+    [threads, projects, inactive.marks, S.groups],
   );
 
   if (status === "loading" && threads.length === 0) {
@@ -853,6 +864,8 @@ function MachineThreadTree({ activeThreadId, onNavigate }: PluginThreadListProps
 }
 
 export default definePluginApp((app) => {
+  // Registered once at load, so these host-shown labels stay English.
+  const S = LANGUAGES.en;
   app.slots.experimental_threadList({
     id: "machine-tree",
     title: S.list.title,

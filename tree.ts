@@ -12,7 +12,7 @@
 // attention again or something new happened in it after it was marked
 // (`latestAttentionAt` is newer than the mark); merely reading it does not.
 
-import { S } from "./strings.ts";
+import { ENGLISH, type Strings } from "./strings.ts";
 
 export interface TreeThread {
   id: string;
@@ -36,8 +36,12 @@ export interface InactiveMarks {
 
 export const NO_INACTIVE_MARKS: InactiveMarks = { threads: {}, projects: {} };
 
+/** Names for groups that have no name of their own; English unless given. */
+export type GroupNames = Pick<Strings["groups"], "personal" | "unknownProject" | "noMachine">;
+
 export interface TreeOptions<T extends TreeThread> {
   inactive?: InactiveMarks;
+  groups?: GroupNames;
   /** Threads that need the user right now never stay inactive. */
   needsAttention?: (thread: T) => boolean;
 }
@@ -83,7 +87,6 @@ export interface Tree<T extends TreeThread> {
 /** Plugin setting: thin vertical guides through nested threads, like an editor's file tree. */
 export const HIERARCHY_GUIDES_SETTING = "showHierarchyGuides";
 
-export const PERSONAL_GROUP_NAME = S.groups.personal;
 const NO_MACHINE = "no-machine";
 
 /** "Ada’s MacBook Pro" → "Ada"; other names stay as they are. */
@@ -164,22 +167,23 @@ function projectGroups<T extends TreeThread>(
   byProject: ReadonlyMap<string, T[]>,
   projects: readonly TreeProject[],
   keyPrefix: string,
+  groups: GroupNames,
 ): ProjectGroup<T>[] {
   const projectOrder = new Map(projects.map((project, index) => [project.id, index]));
   const projectById = new Map(projects.map((project) => [project.id, project]));
-  const groups = [...byProject.entries()].map(([projectId, list]) => {
+  const result = [...byProject.entries()].map(([projectId, list]) => {
     const project = projectById.get(projectId);
     const isPersonal = project?.isPersonal ?? false;
     return {
       key: `${keyPrefix}${machineKey}/${projectId}`,
       projectId,
-      name: isPersonal ? PERSONAL_GROUP_NAME : (project?.name ?? S.groups.unknownProject),
+      name: isPersonal ? groups.personal : (project?.name ?? groups.unknownProject),
       isPersonal,
       rows: nestRows(list),
     };
   });
   // The user's project order, the personal bucket last.
-  groups.sort((a, b) => {
+  result.sort((a, b) => {
     if (a.isPersonal !== b.isPersonal) return a.isPersonal ? 1 : -1;
     return (
       (projectOrder.get(a.projectId) ?? Number.MAX_SAFE_INTEGER) -
@@ -187,7 +191,7 @@ function projectGroups<T extends TreeThread>(
       a.name.localeCompare(b.name)
     );
   });
-  return groups;
+  return result;
 }
 
 export function buildTree<T extends TreeThread>(
@@ -196,6 +200,7 @@ export function buildTree<T extends TreeThread>(
   options: TreeOptions<T> = {},
 ): Tree<T> {
   const marks = options.inactive ?? NO_INACTIVE_MARKS;
+  const names = options.groups ?? ENGLISH.groups;
   const visible = threads.filter((thread) => !thread.isHidden && !thread.isArchived);
 
   const pinned = visible
@@ -226,14 +231,14 @@ export function buildTree<T extends TreeThread>(
   }
 
   const machines: MachineGroup<T>[] = [...byMachine.entries()].map(([key, machine]) => {
-    const fullName = machine.host?.name ?? S.groups.noMachine;
+    const fullName = machine.host?.name ?? names.noMachine;
     return {
       key,
       hostId: machine.host?.id ?? null,
       name: shortMachineName(fullName),
       fullName,
-      projects: projectGroups(key, machine.active, projects, ""),
-      inactive: projectGroups(key, machine.inactive, projects, "inactive:"),
+      projects: projectGroups(key, machine.active, projects, "", names),
+      inactive: projectGroups(key, machine.inactive, projects, "inactive:", names),
     };
   });
   machines.sort((a, b) => {

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — Unreleased
+
+- Add a `language` setting (`en` default, `de`, `auto` from the browser language). All
+  user-visible texts now live in `strings/en.ts` and `strings/de.ts`; German is typed as the
+  English shape, so a missing key fails the type check.
+- Move the remaining hardcoded English texts into the string files, including the Farcall
+  status labels, durations, tooltips and aria labels. Status outcome codes are unchanged.
+- Forks add their own keys to both languages instead of replacing `strings.ts`.
+- Bb-facing labels registered at load (the plugin's list name and the Title tags heading) stay English.
+
 ## 0.3.0 — 2026-10-04
 
 - Bound workspace debouncing to 1.5 seconds under sustained events; recover once after 15 seconds when an index load fails or stays dirty.

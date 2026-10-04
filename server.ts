@@ -10,6 +10,7 @@ import { z } from "zod";
 import { FARCALL_CHANGED, FARCALL_SETTING, FARCALL_WORKSPACES_CHANGED, farcallSnapshotSchema } from "./farcall-contract";
 import { createFarcallReader } from "./farcall-reader";
 import { createWorkspaceCache, pathKey, workspaceFromPath } from "./farcall-workspaces";
+import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, LANGUAGE_SETTING } from "./strings";
 import { HIERARCHY_GUIDES_SETTING } from "./tree";
 import {
   INACTIVE_CHANGED,
@@ -68,6 +69,10 @@ const MAX_MARKS = 2000;
 export default async function plugin(bb: BbPluginApi) {
   bb.log.info("loaded");
   const settings = bb.settings.define({
+    [LANGUAGE_SETTING]: {
+      type: "select", options: LANGUAGE_OPTIONS, default: DEFAULT_LANGUAGE, label: "Language",
+      description: "Language of the sidebar texts: en (English), de (German) or auto (browser language, English if unsupported).",
+    },
     [FARCALL_SETTING]: {
       type: "boolean", default: false, label: "Show Farcall tasks",
       description: "Lists Claude and Codex worker calls under their coordinator. Never starts, retries or controls workers.",

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ENGLISH, type Strings } from "./strings";
 
 export const FARCALL_SETTING = "showFarcallTasks";
 export const FARCALL_CHANGED = "farcall-tasks.changed";
@@ -45,24 +46,31 @@ export const farcallSnapshotSchema = z.object({ tasks: z.array(farcallRowSchema)
 export type TaskOutcome = "open" | "completed" | "failed" | "timeout" | "cancelled" | "unknown";
 export interface TaskStatus { outcome: TaskOutcome; label: string; short: string }
 
-const OPEN: TaskStatus = { outcome: "open", label: "Call open", short: "open" };
-const UNKNOWN: TaskStatus = { outcome: "unknown", label: "Outcome unknown", short: "unknown" };
-const failed = (label: string): TaskStatus => ({ outcome: "failed", label, short: "failed" });
-const TIMEOUT: TaskStatus = { outcome: "timeout", label: "Timed out", short: "timeout" };
-const cancelled = (label: string, short: string): TaskStatus => ({ outcome: "cancelled", label, short });
-const STATUSES: Record<string, TaskStatus> = {
-  completed: { outcome: "completed", label: "Completed", short: "done" },
-  failed: failed("Failed"), spawn_error: failed("Failed to start"), evidence_error: failed("Evidence error"),
-  timeout: TIMEOUT, timed_out: TIMEOUT,
-  cancelled: cancelled("Cancelled", "cancelled"), interrupted: cancelled("Interrupted", "interrupted"),
-  not_started: cancelled("Not started", "not started"),
+/** Keys of the status texts (`farcall.status` in the string files). */
+type StatusText = keyof Strings["farcall"]["status"];
+
+/** Outcome codes stay codes; only the labels come from the string files. */
+const OUTCOMES: Record<StatusText, TaskOutcome> = {
+  open: "open", unknown: "unknown", completed: "completed",
+  failed: "failed", spawnError: "failed", evidenceError: "failed",
+  timeout: "timeout",
+  cancelled: "cancelled", interrupted: "cancelled", notStarted: "cancelled",
+};
+/** The worker's reported `status` → its text. */
+const TEXT_BY_STATUS: Record<string, StatusText> = {
+  completed: "completed",
+  failed: "failed", spawn_error: "spawnError", evidence_error: "evidenceError",
+  timeout: "timeout", timed_out: "timeout",
+  cancelled: "cancelled", interrupted: "interrupted", not_started: "notStarted",
 };
 
-export function taskStatus(task: FarcallRow): TaskStatus {
-  if (task.status === null) return task.callState === "open" ? OPEN : UNKNOWN;
-  return STATUSES[task.status] ?? UNKNOWN;
+export function taskStatus(task: FarcallRow, texts: Strings["farcall"]["status"] = ENGLISH.farcall.status): TaskStatus {
+  const text: StatusText = task.status === null
+    ? (task.callState === "open" ? "open" : "unknown")
+    : TEXT_BY_STATUS[task.status] ?? "unknown";
+  return { outcome: OUTCOMES[text], ...texts[text] };
 }
 
-export function taskStatusLabel(task: FarcallRow): string {
-  return taskStatus(task).label;
+export function taskStatusLabel(task: FarcallRow, texts?: Strings["farcall"]["status"]): string {
+  return taskStatus(task, texts).label;
 }

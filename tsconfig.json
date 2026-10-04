@@ -36,6 +36,8 @@
     "server.ts",
     "settings.tsx",
     "strings.ts",
+    "strings",
+    "i18n.tsx",
     "tag-rules.tsx",
     "tags.ts",
     "tree.ts",
@@ -43,6 +45,8 @@
     "farcall-workspaces.test.ts",
     "farcall-workspace-ui.test.tsx",
     "farcall-refresh.ts",
-    "farcall-refresh.test.ts"
+    "farcall-refresh.test.ts",
+    "strings.test.ts",
+    "i18n.test.tsx"
   ]
 }

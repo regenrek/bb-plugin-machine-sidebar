@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
 import { HierarchyGuides } from "./hierarchy-guides";
 import { FARCALL_CHANGED, FARCALL_WORKSPACES_CHANGED, farcallChangedSchema, taskStatus, type FarcallRow, type TaskOutcome } from "./farcall-contract";
 import { createFarcallRefresh, sameFarcallRows } from "./farcall-refresh";
-import { S } from "./strings";
+import { useStrings } from "./i18n";
+import { ENGLISH, type Strings } from "./strings";
 import type { rpcContract } from "./server";
 
 function useFarcallTasks(threadId: string) {
@@ -67,20 +68,22 @@ export function modelLabel(task: FarcallRow): string {
   return `${family} ${claude[2]}${claude[3] ? `.${claude[3]}` : ""}`;
 }
 
-export function formatDuration(ms: number): string {
+type Duration = Strings["farcall"]["duration"];
+
+export function formatDuration(ms: number, text: Duration = ENGLISH.farcall.duration): string {
   const minutes = Math.floor(ms / 60_000);
-  if (minutes < 1) return "<1m";
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 1) return text.lessThanMinute;
+  if (minutes < 60) return text.minutes(minutes);
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ${String(minutes % 60).padStart(2, "0")}m`;
-  return `${Math.floor(hours / 24)}d ${hours % 24}h`;
+  if (hours < 24) return text.hoursMinutes(hours, String(minutes % 60).padStart(2, "0"));
+  return text.daysHours(Math.floor(hours / 24), hours % 24);
 }
 
 /** Call time from BB events; unavailable stays unavailable. */
-export function callDuration(task: FarcallRow, now: number): string {
+export function callDuration(task: FarcallRow, now: number, text: Duration = ENGLISH.farcall.duration): string {
   const end = task.callState === "open" ? now : task.endedAt;
-  if (task.startedAt === null || end === null || end < task.startedAt) return "time unavailable";
-  return formatDuration(end - task.startedAt);
+  if (task.startedAt === null || end === null || end < task.startedAt) return text.unavailable;
+  return formatDuration(end - task.startedAt, text);
 }
 
 /** Ticks only while an expanded open call shows its waiting time. */
@@ -98,7 +101,8 @@ function useNow(active: boolean): number {
 const TONE: Partial<Record<TaskOutcome, string>> = { failed: "text-destructive", timeout: "text-destructive" };
 
 function StatusMark({ task }: { task: FarcallRow }) {
-  const status = taskStatus(task);
+  const S = useStrings();
+  const status = taskStatus(task, S.farcall.status);
   const mark = status.outcome === "open"
     ? <span className="size-3 animate-spin rounded-full border-[1.5px] border-muted-foreground/30 border-t-muted-foreground motion-reduce:animate-none" />
     : status.outcome === "completed"
@@ -113,17 +117,18 @@ function StatusMark({ task }: { task: FarcallRow }) {
 }
 
 function TaskDetails({ task }: { task: FarcallRow }) {
+  const S = useStrings();
   const now = useNow(task.callState === "open" && task.startedAt !== null);
-  const status = taskStatus(task);
+  const status = taskStatus(task, S.farcall.status);
   return (
     <div className="flex min-w-0 flex-col gap-1 pb-2 pl-[26px] pr-2 pt-1 text-xs leading-5">
       {task.task && <p title={task.task} className="line-clamp-2 text-sidebar-foreground [overflow-wrap:anywhere]">{task.task}</p>}
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-muted-foreground">
         <span className={TONE[status.outcome]}>{status.label}</span>
         <span className="inline-flex min-w-0 items-center gap-1 tabular-nums"
-          title="Elapsed tool call time from BB events, not measured worker run time">
+          title={S.farcall.callTimeHint}>
           <Icon name="Clock" fallback="Dot" aria-hidden className="size-3 shrink-0" />
-          <span>{callDuration(task, now)}</span>
+          <span>{callDuration(task, now, S.farcall.duration)}</span>
         </span>
       </div>
     </div>
@@ -134,6 +139,7 @@ type Provider = ComponentProps<typeof ProviderIcon>["provider"];
 
 /** Snapshot metadata only: no effects, state, timers or width measurements. */
 export function WorkerWorkspace({ task }: { task: FarcallRow }) {
+  const S = useStrings();
   const workspace = task.workspace;
   if (!workspace) return null;
   const label = workspace.branch ?? workspace.label;
@@ -149,14 +155,15 @@ export function WorkerWorkspace({ task }: { task: FarcallRow }) {
 }
 
 /** Icon, model, task and status on one line; the expanded row adds call time. */
-function TaskRow({ task, provider }: { task: FarcallRow; provider: Provider }) {
+export function TaskRow({ task, provider }: { task: FarcallRow; provider: Provider }) {
+  const S = useStrings();
   const [expanded, setExpanded] = useState(false);
   const detailsId = useId();
   return (
     <li className="min-w-0">
       <button type="button" aria-expanded={expanded} aria-controls={detailsId}
         onClick={() => setExpanded(!expanded)}
-        title={`${PROVIDER_NAMES[task.provider]} · ${task.requestedModel ?? "model unknown"} · ${taskStatus(task).label}`}
+        title={`${PROVIDER_NAMES[task.provider]} · ${task.requestedModel ?? S.farcall.modelUnknown} · ${taskStatus(task, S.farcall.status).label}`}
         className={cn("flex h-6 w-full min-w-0 items-center gap-2 rounded-md px-1 text-left text-xs text-sidebar-foreground/85 hover:bg-sidebar-accent", focus)}>
         <ProviderIcon providerKind="agent" provider={provider} aria-hidden className="size-3.5 shrink-0" />
         <span className="max-w-[55%] shrink-0 truncate">{modelLabel(task)}</span>
@@ -172,6 +179,7 @@ function TaskRow({ task, provider }: { task: FarcallRow; provider: Provider }) {
 export function FarcallTasks({ threadId, title, depth, guides = false }: {
   threadId: string; title: string; depth: number; guides?: boolean;
 }) {
+  const S = useStrings();
   const { tasks, error } = useFarcallTasks(threadId);
   const { providers } = experimental_useProviders();
   const [showFinished, setShowFinished] = useState(false);
@@ -186,7 +194,7 @@ export function FarcallTasks({ threadId, title, depth, guides = false }: {
   const finished = tasks.filter((task) => task.callState !== "open").reverse();
   // Icons line up with native child threads (`22 + (depth + 1) * 14`).
   return (
-    <section aria-label={`Farcall tasks under ${title}`} style={{ paddingLeft: 32 + depth * 14 }} className="relative min-w-0">
+    <section aria-label={S.farcall.tasksUnder(title)} style={{ paddingLeft: 32 + depth * 14 }} className="relative min-w-0">
       {guides && <HierarchyGuides levels={depth + 1} />}
       {open.length > 0 && <ul className="min-w-0">{open.map((task) => <TaskRow key={task.key} task={task} provider={provider(task)} />)}</ul>}
       {finished.length > 0 && (
@@ -197,14 +205,14 @@ export function FarcallTasks({ threadId, title, depth, guides = false }: {
             className={cn("flex h-6 w-full min-w-0 items-center gap-1.5 rounded-md px-1 text-left text-xs text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground", focus)}>
             <Icon name="ChevronRight" fallback="Dot"
               className={cn("size-3 shrink-0 transition-transform duration-150 motion-reduce:transition-none", showFinished && "rotate-90")} />
-            <span>Done <span className="tabular-nums">{finished.length}</span></span>
+            <span>{S.farcall.done} <span className="tabular-nums">{finished.length}</span></span>
           </button>
           <ul id={finishedId} hidden={!showFinished} className="min-w-0">
             {showFinished && finished.map((task) => <TaskRow key={task.key} task={task} provider={provider(task)} />)}
           </ul>
         </div>
       )}
-      {error && <p role="status" className="px-1 text-xs text-muted-foreground">Couldn't refresh Farcall tasks.</p>}
+      {error && <p role="status" className="px-1 text-xs text-muted-foreground">{S.farcall.refreshError}</p>}
     </section>
   );
 }
