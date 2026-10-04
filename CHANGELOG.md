@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 — Unreleased
+## 0.4.0 — 2026-10-04
 
 - Add a `language` setting (`en` default, `de`, `auto` from the browser language). All
   user-visible texts now live in `strings/en.ts` and `strings/de.ts`; German is typed as the
