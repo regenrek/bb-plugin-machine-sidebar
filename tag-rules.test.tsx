@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import TagSettingsSection from "./settings";
 
@@ -55,12 +55,16 @@ describe("translated tag rule errors", () => {
     [new Error("Failed to fetch"), "Verbindung zum Server fehlgeschlagen.", "Could not connect to the server."],
     [new Error("Unexpected SDK detail"), "Ein unerwarteter Fehler ist aufgetreten.", "An unexpected error occurred."],
   ])("translates and retranslates a stored save error (%s)", async (cause, german, english) => {
+    let resolveRules!: (result: { rules: [] }) => void;
+    const loaded = new Promise<{ rules: [] }>((resolve) => { resolveRules = resolve; });
     sdk.rpc.call.mockImplementation((method) => method === "tag_rules_get"
-      ? Promise.resolve({ rules: [] }) : Promise.reject(cause));
+      ? loaded : Promise.reject(cause));
     const view = render(<TagSettingsSection />);
+    // Flush both the RPC update and the effect that initializes the draft.
+    await act(async () => resolveRules({ rules: [] }));
     await screen.findByText("Noch keine Tag-Farben.");
     fireEvent.click(screen.getByRole("button", { name: "Tag hinzufügen" }));
-    fireEvent.change(screen.getByRole("textbox", { name: "Tag-Name" }), { target: { value: "Bug" } });
+    fireEvent.change(await screen.findByRole("textbox", { name: "Tag-Name" }), { target: { value: "Bug" } });
     fireEvent.click(screen.getByRole("radio", { name: "Rot" }));
     fireEvent.click(screen.getByRole("button", { name: "Speichern" }));
     await screen.findByText(`Speichern fehlgeschlagen: ${german}`);
