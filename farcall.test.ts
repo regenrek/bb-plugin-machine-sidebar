@@ -209,22 +209,25 @@ describe("Farcall SDK reader and backend", () => {
     expect(host.harness.realtimeSignals).toEqual([]);
     await host.harness.dispose();
   });
-  it("uses only SDK event reads, publishes invalidations while enabled, and rebuilds after plugin reload", async () => {
+  it("uses only SDK reads, publishes invalidations while enabled, and rebuilds after plugin reload", async () => {
     const sdkList = list(fixture);
-    const host = createFakePluginHost({ pluginId: "team-sidebar", settings: { [FARCALL_SETTING]: true }, sdk: { threads: { events: { list: sdkList } } } });
+    const host = createFakePluginHost({ pluginId: "team-sidebar", settings: { [FARCALL_SETTING]: true }, sdk: {
+      threads: { events: { list: sdkList }, get: async () => makeThreadResponse({ environmentId: null }) },
+      environments: { list: async () => [] }, subscribe: () => () => {},
+    } });
     await plugin(host.bb);
     const first = await host.harness.callRpc("farcall_tasks_get", { threadId: "coordinator" });
     const rows = (first as { tasks: Record<string, unknown>[] }).tasks;
     expect(rows.length).toBeGreaterThan(30);
     for (const row of rows) {
-      expect(Object.keys(row).sort()).toEqual(["callState", "endedAt", "key", "provider", "requestedModel", "startedAt", "status", "task"]);
+      expect(Object.keys(row).filter((key) => key !== "cwd" && key !== "workspace").sort()).toEqual(["callState", "endedAt", "key", "provider", "requestedModel", "startedAt", "status", "task"]);
     }
     // Result text, sessions and evidence remain in BB history, not each sidebar refresh.
     expect(JSON.stringify(first).length).toBeLessThan(JSON.stringify({ tasks: projectFarcallEvents(fixture) }).length);
     await host.harness.emitThreadEvent("experimental_thread.events", { thread: makeThreadResponse({ id: "coordinator" }), sequence: 10 });
     expect(host.harness.realtimeSignals.at(-1)).toMatchObject({ channel: FARCALL_CHANGED, payload: { threadId: "coordinator", sequence: 10 } });
     expect(sdkList.mock.calls).toHaveLength(2); // Notification itself only invalidates; it reads nothing.
-    expect(new Set(host.harness.sdk.calls.map((call) => call.path))).toEqual(new Set(["threads.events.list"]));
+    expect(new Set(host.harness.sdk.calls.map((call) => call.path))).toEqual(new Set(["threads.events.list", "threads.get", "environments.list", "subscribe"]));
     const next = await host.harness.reload(plugin);
     expect(await next.harness.callRpc("farcall_tasks_get", { threadId: "coordinator" })).toEqual(first);
     await next.harness.setSettings({ [FARCALL_SETTING]: false });

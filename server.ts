@@ -6,8 +6,9 @@
 // rendering and native thread actions stay in app.tsx.
 import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
 import { z } from "zod";
-import { FARCALL_CHANGED, FARCALL_SETTING, farcallSnapshotSchema } from "./farcall-contract";
+import { FARCALL_CHANGED, FARCALL_SETTING, FARCALL_WORKSPACES_CHANGED, farcallSnapshotSchema } from "./farcall-contract";
 import { createFarcallReader } from "./farcall-reader";
+import { createWorkspaceCache, workspaceFromPath } from "./farcall-workspaces";
 import { HIERARCHY_GUIDES_SETTING } from "./tree";
 import {
   INACTIVE_CHANGED,
@@ -76,7 +77,36 @@ export default async function plugin(bb: BbPluginApi) {
     },
   });
   const farcall = createFarcallReader((args) => bb.sdk.threads.events.list(args));
-  settings.onChange((next) => { if (!next.showFarcallTasks) farcall.clear(); });
+  const workspaces = createWorkspaceCache((args) => bb.sdk.environments.list(args));
+  let subscriptions: (() => void)[] = [];
+  let subscriptionAttempted = false;
+  const stopWorkspaces = () => {
+    for (const unsubscribe of subscriptions) unsubscribe();
+    subscriptions = [];
+    subscriptionAttempted = false;
+    workspaces.invalidate();
+  };
+  const observeWorkspaces = () => {
+    if (subscriptionAttempted) return;
+    subscriptionAttempted = true;
+    const invalidate = () => {
+      workspaces.invalidate();
+      bb.realtime.publish(FARCALL_WORKSPACES_CHANGED, null);
+    };
+    try {
+      subscriptions.push(bb.sdk.subscribe({ event: "environment:changed", callback: invalidate }));
+      subscriptions.push(bb.sdk.subscribe({ event: "realtime:connection", callback: (event) => {
+        // A disconnect can lose environment events. Drop the index on both edges.
+        if (event.state !== "connecting") invalidate();
+      } }));
+    } catch {
+      for (const unsubscribe of subscriptions) unsubscribe();
+      subscriptions = [];
+      bb.log.warn("Environment notifications unavailable; workspace metadata uses a 15s snapshot cache.");
+    }
+  };
+  bb.onDispose(stopWorkspaces);
+  settings.onChange((next) => { if (!next.showFarcallTasks) { farcall.clear(); stopWorkspaces(); } });
   bb.events.on("experimental_thread.events", async ({ thread, sequence }) => {
     if ((await settings.get()).showFarcallTasks) bb.realtime.publish(FARCALL_CHANGED, { threadId: thread.id, sequence });
   });
@@ -100,10 +130,21 @@ export default async function plugin(bb: BbPluginApi) {
     );
 
   bb.rpc.register(rpcContract, {
-    farcall_tasks_get: async ({ threadId }) =>
-      (await settings.get()).showFarcallTasks
-        ? farcallSnapshotSchema.parse(await farcall.read(threadId))
-        : { tasks: [] },
+    farcall_tasks_get: async ({ threadId }) => {
+      if (!(await settings.get()).showFarcallTasks) return { tasks: [] };
+      const snapshot = await farcall.read(threadId);
+      if (!snapshot.tasks.some((task) => task.cwd)) return farcallSnapshotSchema.parse(snapshot);
+      observeWorkspaces();
+      const [index, coordinator] = await Promise.all([
+        workspaces.read(subscriptions.length > 0),
+        (async () => { try { return await bb.sdk.threads.get({ threadId }); } catch { return null; } })(),
+      ]);
+      const hostId = coordinator ? index?.hostFor(coordinator.environmentId) : undefined;
+      return farcallSnapshotSchema.parse({ tasks: snapshot.tasks.map((task) => {
+        const workspace = index ? index.resolve(task.cwd, hostId) : workspaceFromPath(task.cwd);
+        return workspace ? { ...task, workspace } : task;
+      }) });
+    },
     inactive_get: () => readMarks(),
     inactive_set: async ({ kind, id, inactive }) => {
       const marks = await readMarks();

@@ -15,6 +15,7 @@ const text = z.string().trim().min(1).max(512);
 const requestTaskSchema = z.object({
   task_id: text.optional(), delegation_id: text.optional(), model: text.optional(),
   prompt: z.unknown().optional(), prompt_file: z.unknown().optional(),
+  cwd: z.string().min(1).max(4096).optional().catch(undefined),
 });
 const requestSchema = requestTaskSchema.extend({ batch_id: text.optional(), tasks: z.array(requestTaskSchema).optional() });
 const resultSchema = z.object({
@@ -126,6 +127,7 @@ export class FarcallProjection {
           status: null, callState: "open", result: null, sessionId: null, evidence: [],
           // A completion-only replay has no start time; it stays unavailable rather than zero.
           task: taskText(task), startedAt: event.type === "item/started" ? at : null, endedAt: null,
+          ...((task.cwd ?? args.cwd) ? { cwd: task.cwd ?? args.cwd } : {}),
         });
         // A new call for a delegation without a known result waits again; its first start time stays.
         else if (existing.status === null && event.type === "item/started") Object.assign(existing, { callState: "open", endedAt: null });

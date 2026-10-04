@@ -39,6 +39,10 @@ several machines, for example a laptop and a remote Mac or Linux box.
   never starts, retries or controls workers. While a batch call is open the
   sidebar shows "Call open" rather than guessing per-worker progress. Turn it
   on under Settings → Installed plugins → Machine Sidebar → Show Farcall tasks.
+  A second compact line shows the worker's worktree branch when its requested
+  working directory matches a bb environment on the coordinator's machine.
+  Otherwise, a `worktrees/<name>` path shows the folder name; its tooltip says
+  **Working folder**, never claiming a branch. [Matching and cache behavior](docs/worker-workspaces.md).
   Works well with [split-orchestrator](https://github.com/regenrek/split-orchestrator).
 - **Hierarchy guides (optional).** Thin vertical lines through nested threads
   and worker tasks, like an editor's file tree (Show hierarchy guides).

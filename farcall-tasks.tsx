@@ -9,7 +9,8 @@ import {
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { HierarchyGuides } from "./hierarchy-guides";
-import { FARCALL_CHANGED, farcallChangedSchema, taskStatus, type FarcallRow, type TaskOutcome } from "./farcall-contract";
+import { FARCALL_CHANGED, FARCALL_WORKSPACES_CHANGED, farcallChangedSchema, taskStatus, type FarcallRow, type TaskOutcome } from "./farcall-contract";
+import { S } from "./strings";
 import type { rpcContract } from "./server";
 
 function useFarcallTasks(threadId: string) {
@@ -34,6 +35,9 @@ function useFarcallTasks(threadId: string) {
   useRealtime(FARCALL_CHANGED, (payload) => {
     const changed = farcallChangedSchema.safeParse(payload);
     if (changed.success && changed.data.threadId === threadId) refresh();
+  });
+  useRealtime(FARCALL_WORKSPACES_CHANGED, () => {
+    if (tasks.some((task) => task.cwd)) refresh();
   });
   return { tasks, error };
 }
@@ -118,6 +122,22 @@ function TaskDetails({ task }: { task: FarcallRow }) {
 
 type Provider = ComponentProps<typeof ProviderIcon>["provider"];
 
+/** Snapshot metadata only: no effects, state, timers or width measurements. */
+export function WorkerWorkspace({ task }: { task: FarcallRow }) {
+  const workspace = task.workspace;
+  if (!workspace) return null;
+  const label = workspace.branch ?? workspace.label;
+  const description = workspace.source === "path" ? S.workerWorkspace.folder(workspace.label)
+    : workspace.branch ? S.workerWorkspace.branch(workspace.branch) : S.workerWorkspace.detached(workspace.label);
+  return (
+    <div title={description} aria-label={description}
+      className="flex min-w-0 items-center gap-1 pb-0.5 pl-[26px] pr-1 text-[11px] leading-4 text-muted-foreground">
+      <Icon name="GitFork" fallback="GitBranch" aria-hidden className="size-3 shrink-0" />
+      <span className="min-w-0 truncate">{label}</span>
+    </div>
+  );
+}
+
 /** Icon, model, task and status on one line; the expanded row adds call time. */
 function TaskRow({ task, provider }: { task: FarcallRow; provider: Provider }) {
   const [expanded, setExpanded] = useState(false);
@@ -133,6 +153,7 @@ function TaskRow({ task, provider }: { task: FarcallRow; provider: Provider }) {
         <span title={task.task ?? undefined} className="min-w-0 flex-1 truncate text-muted-foreground">{task.task}</span>
         <StatusMark task={task} />
       </button>
+      <WorkerWorkspace task={task} />
       <div id={detailsId} hidden={!expanded}>{expanded && <TaskDetails task={task} />}</div>
     </li>
   );

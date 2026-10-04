@@ -5,6 +5,11 @@
 const plural = (count: number, one: string, many: string) => (count === 1 ? one : many);
 
 export const S = {
+  workerWorkspace: {
+    branch: (branch: string) => `Worktree branch: ${branch}`,
+    folder: (name: string) => `Working folder: ${name} (from task path; branch unknown)`,
+    detached: (name: string) => `Worktree: ${name} (branch unavailable)`,
+  },
   list: {
     title: "Machine → Project",
     description: "Threads grouped by the machine they run on, then by project.",

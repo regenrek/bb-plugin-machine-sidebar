@@ -1,0 +1,44 @@
+{
+  "source": "Synthetic neutral paths using the existing real bb tool-call event shape.",
+  "events": [
+    {
+      "id": "evt_workspace_1",
+      "scope": {
+        "kind": "turn",
+        "turnId": "turn_workspace"
+      },
+      "threadId": "coordinator",
+      "seq": 1,
+      "createdAt": 1790918250763,
+      "type": "item/started",
+      "data": {
+        "item": {
+          "type": "toolCall",
+          "id": "workspace-batch",
+          "server": "plugin_codex-worker_codex_worker",
+          "tool": "run_batch",
+          "status": "pending",
+          "arguments": {
+            "batch_id": "workspace-batch",
+            "cwd": "/Users/dev/projects/app/.claude/worktrees/default",
+            "tasks": [
+              {
+                "task_id": "w1",
+                "delegation_id": "workspace-w1",
+                "model": "gpt-6.1-sol",
+                "cwd": "/Users/dev/projects/app/.claude/worktrees/w1",
+                "prompt": "Build the first feature."
+              },
+              {
+                "task_id": "w2",
+                "delegation_id": "workspace-w2",
+                "model": "gpt-6.1-sol",
+                "prompt": "Review the second feature."
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
