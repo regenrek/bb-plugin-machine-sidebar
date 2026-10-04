@@ -1,4 +1,10 @@
+import { createBoundedDebounce } from "./lib/bounded-debounce";
 import type { FarcallRow } from "./farcall-contract";
+
+/** Compare the bounded, JSON-only wire rows once per snapshot, not per render. */
+export function sameFarcallRows(previous: FarcallRow[], next: FarcallRow[]): boolean {
+  return previous === next || JSON.stringify(previous) === JSON.stringify(next);
+}
 
 /** One scheduler per visible coordinator, not per worker. No periodic polling. */
 export function createFarcallRefresh(
@@ -11,28 +17,26 @@ export function createFarcallRefresh(
   let hasCwd: boolean | undefined;
   let tasksDirty = false;
   let workspaceDirty = false;
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  let refreshDue = false;
   const needsLoad = () => tasksDirty || (workspaceDirty && hasCwd !== false);
-  const schedule = () => {
-    if (timer !== undefined) clearTimeout(timer);
-    timer = setTimeout(() => { timer = undefined; void run(); }, 300);
-  };
+  const debounce = createBoundedDebounce(() => { refreshDue = true; void run(); });
   const run = async () => {
     if (!alive || pending || !needsLoad()) return;
+    refreshDue = false;
     tasksDirty = false;
     workspaceDirty = false;
     pending = true;
     try {
       const result = await load();
       if (!alive) return;
-      hasCwd = result.tasks.some((task) => task.hasCwd === true);
+      hasCwd = result.tasks.some((task) => task.hasCwd !== false);
       accept(result.tasks);
     } catch {
       if (alive) failed();
     } finally {
       pending = false;
       // Events during the first load are retained until hasCwd is known.
-      if (alive && needsLoad() && timer === undefined) schedule();
+      if (alive && needsLoad() && refreshDue) void run();
     }
   };
   return {
@@ -41,8 +45,8 @@ export function createFarcallRefresh(
       if (!alive || (kind === "workspace" && hasCwd === false && !pending)) return;
       if (kind === "tasks") tasksDirty = true;
       else workspaceDirty = true;
-      schedule();
+      debounce.mark();
     },
-    dispose() { alive = false; if (timer !== undefined) clearTimeout(timer); timer = undefined; },
+    dispose() { alive = false; debounce.cancel(); },
   };
 }

@@ -4,6 +4,7 @@
 // threads/projects marked inactive, and tells every open window when either
 // changes. The optional Farcall projection reads existing BB thread events;
 // rendering and native thread actions stay in app.tsx.
+import { createBoundedDebounce } from "./lib/bounded-debounce";
 import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
 import { z } from "zod";
 import { FARCALL_CHANGED, FARCALL_SETTING, FARCALL_WORKSPACES_CHANGED, farcallSnapshotSchema } from "./farcall-contract";
@@ -77,16 +78,43 @@ export default async function plugin(bb: BbPluginApi) {
     },
   });
   const farcall = createFarcallReader((args) => bb.sdk.threads.events.list(args));
-  const workspaces = createWorkspaceCache((args) => bb.sdk.environments.list(args));
+  const workspaces = createWorkspaceCache((args) => bb.sdk.environments.list(args), Date.now, {
+    unsettled: () => scheduleRecovery(),
+    settled: () => { cancelRecovery(); recoveryUsed = false; },
+    warn: (message) => bb.log.warn(message),
+  });
   let lifecycle = 0;
   let disposed = false;
   const current = (epoch: number) => !disposed && epoch === lifecycle;
   let subscriptions: (() => void)[] = [];
   let nextSubscriptionAttempt = 0;
-  let workspaceTimer: ReturnType<typeof setTimeout> | undefined;
+  let recoveryTimer: ReturnType<typeof setTimeout> | undefined;
+  let recoveryUsed = false;
+  const cancelRecovery = () => {
+    if (recoveryTimer !== undefined) clearTimeout(recoveryTimer);
+    recoveryTimer = undefined;
+  };
+  const publishWorkspaceChange = () => {
+    workspaces.invalidate();
+    bb.realtime.publish(FARCALL_WORKSPACES_CHANGED, null);
+  };
+  const scheduleRecovery = () => {
+    if (disposed || recoveryUsed || recoveryTimer !== undefined) return;
+    const epoch = lifecycle;
+    recoveryTimer = setTimeout(() => {
+      recoveryTimer = undefined;
+      if (!current(epoch)) return;
+      recoveryUsed = true;
+      publishWorkspaceChange();
+    }, 15_000);
+  };
+  const workspaceDebounce = createBoundedDebounce(() => {
+    if (!disposed) publishWorkspaceChange();
+  });
   const stopWorkspaces = () => {
-    if (workspaceTimer !== undefined) clearTimeout(workspaceTimer);
-    workspaceTimer = undefined;
+    workspaceDebounce.cancel();
+    cancelRecovery();
+    recoveryUsed = false;
     for (const unsubscribe of subscriptions) unsubscribe();
     subscriptions = [];
     nextSubscriptionAttempt = 0;
@@ -95,13 +123,8 @@ export default async function plugin(bb: BbPluginApi) {
     if (!current(epoch) || subscriptions.length > 0 || Date.now() < nextSubscriptionAttempt) return;
     const invalidate = () => {
       if (!current(epoch)) return;
-      if (workspaceTimer !== undefined) clearTimeout(workspaceTimer);
-      workspaceTimer = setTimeout(() => {
-        workspaceTimer = undefined;
-        if (!current(epoch)) return;
-        workspaces.invalidate();
-        bb.realtime.publish(FARCALL_WORKSPACES_CHANGED, null);
-      }, 300);
+      recoveryUsed = false; // A new external change opens a new recovery opportunity.
+      workspaceDebounce.mark();
     };
     try {
       subscriptions.push(bb.sdk.subscribe({ event: "environment:changed", callback: invalidate }));

@@ -10,7 +10,7 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { HierarchyGuides } from "./hierarchy-guides";
 import { FARCALL_CHANGED, FARCALL_WORKSPACES_CHANGED, farcallChangedSchema, taskStatus, type FarcallRow, type TaskOutcome } from "./farcall-contract";
-import { createFarcallRefresh } from "./farcall-refresh";
+import { createFarcallRefresh, sameFarcallRows } from "./farcall-refresh";
 import { S } from "./strings";
 import type { rpcContract } from "./server";
 
@@ -18,13 +18,20 @@ function useFarcallTasks(threadId: string) {
   const rpc = useRpc<typeof rpcContract>();
   const connection = useRealtimeConnectionState();
   const [tasks, setTasks] = useState<FarcallRow[]>([]);
+  const taskSnapshot = useRef(tasks);
   const [error, setError] = useState(false);
   const scheduler = useRef<ReturnType<typeof createFarcallRefresh> | null>(null);
   const previousConnection = useRef(connection);
   useEffect(() => {
     const refresh = createFarcallRefresh(
       () => rpc.call("farcall_tasks_get", { threadId }),
-      (next) => { setTasks(next); setError(false); },
+      (next) => {
+        if (!sameFarcallRows(taskSnapshot.current, next)) {
+          taskSnapshot.current = next;
+          setTasks(next);
+        }
+        setError(false);
+      },
       () => setError(true),
     );
     scheduler.current = refresh;

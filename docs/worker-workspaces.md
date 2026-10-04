@@ -28,32 +28,45 @@ checkout at the exact path gets no worktree marker.
 The plugin uses public SDK `environments.list`, `threads.get` and
 `subscribe` (`environment:changed`, `realtime:connection`). One lazy environment
 index is shared across coordinators. Environment-change bursts are combined by
-one trailing 300 ms debounce before invalidating the index and publishing a UI
-signal. Connection events invalidate only upon `connected`, not on disconnect.
-The client also coalesces updates per visible coordinator, never per worker.
+one trailing 300 ms debounce with a 1.5-second maximum wait from the first mark
+before invalidating the index and publishing a UI signal. Connection events invalidate only upon `connected`, not on disconnect.
+The client uses the same bounded debounce per visible coordinator, never per
+worker. If its RPC is still pending at the deadline, the queued refresh starts
+as soon as that RPC finishes; requests never overlap. Unchanged wire snapshots
+skip the task-state update, avoiding another render of all worker rows.
 An event arriving before the first snapshot finishes is retained until the
 client knows whether that snapshot contains a resolvable working directory.
 
 There is exactly one active index load, including during invalidation or
 feature disable/re-enable. Each page requests `limit: 200`; this is a request,
 not a server guarantee. Pagination advances by the actual page length and stops
-at an empty page. If the generation changes during a load, the loader restarts
+at an empty page. A repeated first ID or more than 10,000 accumulated rows aborts
+the load with a warning and preserves the last good index.
+If the generation changes during a load, the loader restarts
 serially, up to three passes. Under continuous churn or an outage it retains
-the last good index until a later snapshot can refresh it. On a cold start
+the last good index. A reader joining a pending load checks the generation
+afterward and can request one bounded follow-up if it is still unresolved. On a cold start
 without a good index, only the folder hint may be available. One coordinator
 lookup serves all tasks in its snapshot. Notifications are global rather than
-host-filtered, but only visible coordinators with `hasCwd` refresh metadata.
+host-filtered. Visible coordinators with `hasCwd: false` skip metadata refresh;
+a missing field on older rows means unknown and remains eligible.
 
 If event subscriptions cannot be established, snapshots use a 15-second cache.
 A later snapshot retries subscriptions after a 60-second cooldown; no timer
 retries subscriptions automatically. Metadata failures also back off for 15
-seconds. A disabled or disposed lifecycle cannot subscribe, publish signals or
+seconds. A failed load or exhausted dirty passes also schedules one recovery
+signal (invalidate + publish) after 15 seconds, shared by all readers. Visible
+clients then request a snapshot normally. A failed recovery does not schedule
+another: success or a new external environment/connected event opens a new
+recovery opportunity. A successful load cancels any pending recovery signal.
+A disabled or disposed lifecycle cannot subscribe, publish signals or
 populate a cache after an in-flight request completes. Disposal is permanent;
-disable/re-enable starts a fresh lifecycle. Queued debounce timers and listeners
+disable/re-enable starts a fresh lifecycle. Queued debounce/recovery timers and listeners
 are cancelled on both shutdown paths.
 
-There is no periodic polling. The only new timers coalesce received events;
-normal snapshots trigger cache loads and eligible subscription retries. The host
+There is no periodic polling. Timers coalesce received events or deliver the
+one-shot recovery signal; normal snapshots trigger cache loads and eligible
+subscription retries. The host
 assumption is that the Farcall server executes on the coordinator's machine; a
 remote MCP server running elsewhere cannot be identified from these arguments.
 

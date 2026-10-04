@@ -2,6 +2,8 @@
 
 ## 0.3.0 — Unreleased
 
+- Bound workspace debouncing to 1.5 seconds under sustained events; recover once after 15 seconds when an index load fails or stays dirty.
+- Guard repeated/oversized pagination, refresh legacy rows with unknown workspace eligibility, and skip unchanged task-state updates.
 - Show Farcall worker worktree branches from matching bb environments on the
   coordinator's host, with a folder-only fallback for `worktrees/<name>` paths.
 - Resolve workspace metadata at snapshot time so later environment attachments

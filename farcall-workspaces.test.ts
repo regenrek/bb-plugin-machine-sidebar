@@ -143,6 +143,53 @@ describe("shared lazy workspace cache", () => {
     expect((await cache.read(true))?.resolve(cwd, "host-a")).toEqual(resolved);
     expect(list.mock.calls.length - before).toBe(3);
   });
+  it("a joining reader retries an unresolved generation once after the shared load", async () => {
+    const first = deferred<WorkspaceEnvironment[]>();
+    let calls = 0;
+    const list = vi.fn(async ({ offset = 0 }) => {
+      calls++;
+      if (calls <= 3) cache.invalidate();
+      if (calls === 1) return first.promise;
+      return page([env({ branchName: "sol/latest" })], offset);
+    });
+    const cache = createWorkspaceCache(asList(list));
+    const owner = cache.read(true);
+    await Promise.resolve();
+    const joined = cache.read(true);
+    first.resolve([env()]);
+    expect(await owner).toBeNull();
+    expect((await joined)?.resolve(cwd, "host-a")?.branch).toBe("sol/latest");
+    expect(calls).toBe(5); // three dirty passes, then one complete pagination
+  });
+
+  it("a joining reader cannot retry an endlessly dirty load more than once", async () => {
+    const first = deferred<WorkspaceEnvironment[]>();
+    const list = vi.fn(async () => { cache.invalidate(); return list.mock.calls.length === 1 ? first.promise : [env()]; });
+    const cache = createWorkspaceCache(asList(list));
+    const owner = cache.read(true);
+    await Promise.resolve();
+    const joined = Array.from({ length: 10 }, () => cache.read(true));
+    first.resolve([env()]);
+    await Promise.all([owner, ...joined]);
+    expect(list).toHaveBeenCalledTimes(6);
+  });
+
+  it.each(["repeat", "overflow"])("stops unsafe %s pagination and retains the good index", async (kind) => {
+    const list = vi.fn(async ({ offset = 0 }) => page([env()], offset));
+    const warn = vi.fn();
+    const unsettled = vi.fn();
+    const cache = createWorkspaceCache(asList(list), Date.now, { warn, unsettled });
+    const good = await cache.read(true);
+    cache.invalidate();
+    list.mockClear();
+    list.mockImplementation(async ({ offset = 0 }) => kind === "repeat" ? [env()] :
+      Array.from({ length: 200 }, (_, i) => env({ id: `env-${offset + i}` })));
+    expect(await cache.read(true)).toBe(good);
+    expect(list).toHaveBeenCalledTimes(kind === "repeat" ? 2 : 51);
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(unsettled).toHaveBeenCalledTimes(1);
+  });
+
   it.each(["clear", "dispose"] as const)("%s during pagination blocks stale fills and further pages", async (action) => {
     const first = deferred<WorkspaceEnvironment[]>();
     const list = vi.fn(async ({ offset = 0 }) => page([env({ branchName: "sol/new" })], offset))
@@ -190,6 +237,90 @@ function setup(options: { cwd?: string; subscribeFails?: () => boolean } = {}) {
 }
 
 describe("snapshot enrichment lifecycle and bursts", () => {
+  it("publishes at least once per 1.5s during five seconds of continuous changes", async () => {
+    vi.useFakeTimers();
+    const s = setup();
+    await plugin(s.host.bb);
+    await s.read();
+    for (let i = 0; i < 50; i++) {
+      s.listeners.get("environment:changed")!({});
+      await vi.advanceTimersByTimeAsync(100);
+      expect(s.host.harness.realtimeSignals.length).toBe(Math.floor((i + 1) / 15));
+    }
+    await vi.advanceTimersByTimeAsync(300);
+    expect(s.host.harness.realtimeSignals).toHaveLength(4);
+    await s.host.harness.dispose();
+  });
+
+  it.each(["failure", "dirty"])("publishes one recovery after 15s for a %s load, updating stale labels", async (kind) => {
+    vi.useFakeTimers();
+    const s = setup();
+    await plugin(s.host.bb);
+    await s.read();
+    const changed = s.listeners.get("environment:changed")!;
+    changed({});
+    await vi.advanceTimersByTimeAsync(300);
+    if (kind === "failure") s.list.mockRejectedValueOnce(Error("offline"));
+    else {
+      const dirtyPage = async () => {
+        changed({});
+        await new Promise((resolve) => setTimeout(resolve, 301));
+        return [checkout, env()];
+      };
+      for (let i = 0; i < 3; i++) s.list.mockImplementationOnce(dirtyPage);
+    }
+    const pending = s.read();
+    await vi.advanceTimersByTimeAsync(kind === "dirty" ? 903 : 0);
+    expect((await pending).tasks[0].workspace).toEqual(resolved);
+    const before = s.host.harness.realtimeSignals.length;
+    expect(vi.getTimerCount()).toBe(1);
+    await vi.advanceTimersByTimeAsync(14_999);
+    expect(s.host.harness.realtimeSignals).toHaveLength(before);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(s.host.harness.realtimeSignals).toHaveLength(before + 1);
+    s.environments([checkout, env({ branchName: "sol/recovered" })]);
+    expect((await s.read()).tasks[0].workspace).toMatchObject({ branch: "sol/recovered" });
+    expect(vi.getTimerCount()).toBe(0);
+    await s.host.harness.dispose();
+  });
+
+  it("does not repeat a failed recovery or duplicate its timer across readers", async () => {
+    vi.useFakeTimers();
+    const s = setup();
+    await plugin(s.host.bb);
+    s.list.mockRejectedValue(Error("offline"));
+    await Promise.all([s.read(), s.read(), s.read()]);
+    expect(vi.getTimerCount()).toBe(1);
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(s.host.harness.realtimeSignals).toHaveLength(1);
+    await Promise.all([s.read(), s.read()]);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(s.host.harness.realtimeSignals).toHaveLength(1);
+    expect(vi.getTimerCount()).toBe(0);
+    await s.host.harness.dispose();
+  });
+
+  it.each(["disable", "dispose", "success"])("cancels pending recovery on %s", async (action) => {
+    vi.useFakeTimers();
+    const s = setup();
+    await plugin(s.host.bb);
+    s.list.mockRejectedValueOnce(Error("offline"));
+    await s.read();
+    expect(vi.getTimerCount()).toBe(1);
+    if (action === "disable") await s.host.harness.setSettings({ [FARCALL_SETTING]: false });
+    else if (action === "dispose") await s.host.harness.dispose();
+    else {
+      s.listeners.get("environment:changed")!({});
+      await vi.advanceTimersByTimeAsync(300);
+      await s.read();
+    }
+    const before = s.host.harness.realtimeSignals.length;
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(s.host.harness.realtimeSignals).toHaveLength(before);
+    expect(vi.getTimerCount()).toBe(0);
+    if (action !== "dispose") await s.host.harness.dispose();
+  });
+
   it("bundles 20 changes into one invalidation, a single index reload and stable snapshots", async () => {
     vi.useFakeTimers();
     const s = setup();

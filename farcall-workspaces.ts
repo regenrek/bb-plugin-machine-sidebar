@@ -70,7 +70,10 @@ export function createWorkspaceIndex(environments: readonly WorkspaceEnvironment
 }
 
 /** One active pagination, even across invalidations or feature disable/re-enable. */
-export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Date.now) {
+export function createWorkspaceCache(
+  list: Sdk["environments"]["list"], now = Date.now,
+  hooks: { unsettled?: () => void; settled?: () => void; warn?: (message: string) => void } = {},
+) {
   type Index = ReturnType<typeof createWorkspaceIndex>;
   let generation = 0;
   let lifecycle = 0;
@@ -90,13 +93,18 @@ export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Da
     invalidate() { generation++; },
     clear,
     dispose() { disposed = true; clear(); },
-    async read(eventDriven: boolean): Promise<Index | null> {
+    async read(eventDriven: boolean, followDirty = true): Promise<Index | null> {
       if (disposed) return null;
       const epoch = lifecycle;
       if (pending) {
-        if (pending.lifecycle === epoch) return pending.promise;
-        await pending.promise;
-        return disposed || epoch !== lifecycle ? null : cache.read(eventDriven);
+        const sameLifecycle = pending.lifecycle === epoch;
+        const result = await pending.promise;
+        if (disposed || epoch !== lifecycle) return null;
+        if (!sameLifecycle) return cache.read(eventDriven, followDirty);
+        // A joining reader gets one bounded follow-up if the shared load left
+        // its requested generation unresolved. Never fan out parallel loads.
+        return followDirty && cachedGeneration !== generation
+          ? cache.read(eventDriven, false) : result;
       }
       if (cachedGeneration === generation && expiresAt > now()) return lastGood;
       const current = () => !disposed && epoch === lifecycle;
@@ -106,6 +114,7 @@ export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Da
         for (let attempt = 0; attempt < 3 && current(); attempt++) {
           const revision = generation;
           const environments: WorkspaceEnvironment[] = [];
+          const seenIds = new Set<string>();
           try {
             for (let offset = 0; ; ) {
               const page = await list({ limit: 200, offset });
@@ -115,8 +124,14 @@ export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Da
                 lastGood = createWorkspaceIndex(environments);
                 cachedGeneration = revision;
                 expiresAt = eventDriven ? Infinity : now() + 15_000;
+                hooks.settled?.();
                 return lastGood;
               }
+              if (seenIds.has(page[0].id) || environments.length + page.length > 10_000) {
+                hooks.warn?.("Workspace pagination stopped: repeated page or more than 10000 rows; retaining the last good index.");
+                throw Error("Unsafe workspace pagination");
+              }
+              for (const environment of page) seenIds.add(environment.id);
               environments.push(...page);
               offset += page.length; // A server may cap pages below the requested limit.
             }
@@ -125,10 +140,13 @@ export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Da
             if (revision !== generation) continue;
             cachedGeneration = revision;
             expiresAt = now() + 15_000;
+            hooks.unsettled?.();
             return lastGood;
           }
         }
-        return current() ? lastGood : null;
+        if (!current()) return null;
+        hooks.unsettled?.();
+        return lastGood;
       };
       const promise = Promise.resolve().then(load).finally(() => { pending = undefined; });
       pending = { lifecycle: epoch, promise };

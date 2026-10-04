@@ -1,11 +1,63 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createFarcallRefresh } from "./farcall-refresh";
+import { createFarcallRefresh, sameFarcallRows } from "./farcall-refresh";
 import type { FarcallRow } from "./farcall-contract";
 const task: FarcallRow = { key: "w1", provider: "codex", requestedModel: "model", status: null, callState: "open", task: "Example", startedAt: null, endedAt: null, hasCwd: true };
 const result = { tasks: [task] };
 afterEach(() => vi.useRealTimers());
 
 describe("coordinator refresh scheduler", () => {
+  it("refreshes within 1.5s under five seconds of continuous events", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+    const times: number[] = [];
+    const load = vi.fn(async () => { times.push(Date.now()); return result; });
+    const scheduler = createFarcallRefresh(load, vi.fn(), vi.fn());
+    scheduler.start();
+    await vi.advanceTimersByTimeAsync(0);
+    for (let i = 0; i < 50; i++) {
+      scheduler.change("workspace");
+      await vi.advanceTimersByTimeAsync(100);
+    }
+    expect(times).toEqual([0, 1500, 3000, 4500]);
+    await vi.advanceTimersByTimeAsync(300);
+    expect(times).toEqual([0, 1500, 3000, 4500, 5200]);
+    scheduler.dispose();
+  });
+
+  it("waits for an active RPC at the deadline, then immediately refreshes without overlap", async () => {
+    vi.useFakeTimers();
+    let finish!: (value: typeof result) => void;
+    const load = vi.fn(async () => result).mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+    const scheduler = createFarcallRefresh(load, vi.fn(), vi.fn());
+    scheduler.start();
+    for (let i = 0; i < 20; i++) {
+      scheduler.change("workspace");
+      await vi.advanceTimersByTimeAsync(100);
+    }
+    expect(load).toHaveBeenCalledTimes(1);
+    finish(result);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(load).toHaveBeenCalledTimes(2);
+    scheduler.dispose();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("refreshes legacy rows with unknown hasCwd and compares unchanged wire snapshots", async () => {
+    vi.useFakeTimers();
+    const { hasCwd: _, ...legacy } = task;
+    const load = vi.fn(async () => ({ tasks: [legacy] }));
+    const scheduler = createFarcallRefresh(load, vi.fn(), vi.fn());
+    scheduler.start();
+    await vi.advanceTimersByTimeAsync(0);
+    scheduler.change("workspace");
+    await vi.advanceTimersByTimeAsync(300);
+    expect(load).toHaveBeenCalledTimes(2);
+    expect(sameFarcallRows([task], structuredClone([task]))).toBe(true);
+    expect(sameFarcallRows([task], [{ ...task, status: "completed" }])).toBe(false);
+    expect(sameFarcallRows([task], [{ ...task, workspace: { label: "w1", branch: "new", source: "environment" } }])).toBe(false);
+    scheduler.dispose();
+  });
+
   it("20 events cause one refresh per visible coordinator, with no concurrent RPCs", async () => {
     vi.useFakeTimers();
     const coordinators = Array.from({ length: 3 }, () => {
