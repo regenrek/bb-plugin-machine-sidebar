@@ -6,7 +6,8 @@ Use these terms consistently in the German sidebar strings:
 | --- | --- |
 | Thread / sub-thread | Gespräch / Untergespräch |
 | Machine / project | Maschine / Projekt |
-| Git worktree | Git-Worktree (branch label: Git-Worktree-Branch) |
+| Git worktree | Git-Worktree |
+| Worktree (short label) | Worktree (branch label: Worktree-Branch) |
 | Working folder | Arbeitsordner |
 | Pin / unpin | Anpinnen / Nicht mehr anpinnen |
 | Mark active / inactive | Als aktiv markieren / Als inaktiv markieren |

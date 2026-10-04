@@ -63,7 +63,7 @@ describe("language setting", () => {
     expect(html).toContain('aria-label="Gespräche nach Maschine"');
     expect(html).toContain('aria-label="Gespräch archivieren"');
     expect(html).toContain('aria-label="Gesprächsaktionen"');
-    expect(html).toContain('title="feature/login (Git-Worktree)"');
+    expect(html).toContain('title="feature/login (Worktree)"');
     expect(html).toContain('aria-label="2 Unteragenten aktiv"');
     expect(html).not.toContain("Archive thread");
   });
@@ -75,7 +75,7 @@ describe("language setting", () => {
     expect(task).toContain("Codex · Modell unbekannt · Zeitüberschreitung");
     expect(task).not.toContain("Timed out");
     const workspace = render(<WorkerWorkspace task={{ ...row, workspace: { label: "w1", branch: "sol/w1", source: "environment" } }} />);
-    expect(workspace).toContain('aria-label="Git-Worktree-Branch: sol/w1"');
+    expect(workspace).toContain('aria-label="Worktree-Branch: sol/w1"');
     expect(workspace).not.toContain("Worktree branch");
   });
 

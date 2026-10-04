@@ -14,9 +14,9 @@ const tagErrors: Strings["tags"]["errors"] = {
 
 export const de: Strings = {
   workerWorkspace: {
-    branch: (branch: string) => `Git-Worktree-Branch: ${branch}`,
+    branch: (branch: string) => `Worktree-Branch: ${branch}`,
     folder: (name: string) => `Arbeitsordner: ${name} (aus dem Aufgabenpfad, Branch unbekannt)`,
-    detached: (name: string) => `Git-Worktree: ${name} (kein Branch)`,
+    detached: (name: string) => `Worktree: ${name} (kein Branch)`,
   },
   list: {
     title: "Maschine → Projekt",
@@ -41,7 +41,7 @@ export const de: Strings = {
     attention: { waiting: "Wartet auf deine Eingabe", failed: "Fehlgeschlagen", done: "Fertig" },
     queuedFailed: "Nachricht konnte nicht gesendet werden",
     queuedWaiting: "Nachricht wartet auf das Senden",
-    worktree: "Git-Worktree",
+    worktree: "Worktree",
     worktreeTitle: "Git-Worktree",
     activity: (count, one, many) => `${count} ${plural(count, one, many)} aktiv`,
   },
@@ -62,7 +62,7 @@ export const de: Strings = {
     titleInput: "Gesprächstitel",
     archive: "Archivieren",
     archiveThread: "Gespräch archivieren",
-    branchTitle: (branch, isWorktree) => (isWorktree ? `${branch} (Git-Worktree)` : branch),
+    branchTitle: (branch, isWorktree) => (isWorktree ? `${branch} (Worktree)` : branch),
     newThreadIn: (project, machine) => `Neues Gespräch in ${project} auf ${machine}`,
   },
   menu: {
