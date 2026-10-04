@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { LanguageProvider, useStrings } from "./i18n";
 import { useTagRules } from "./tag-rules";
+import { classifyTagRulesError, type TagRulesErrorCode } from "./tag-errors";
 import {
   autoColorId,
   colorHex,
@@ -65,7 +66,7 @@ function TagSettings() {
   const { rules, error, save } = useTagRules();
   const [draft, setDraft] = useState<TagRule[]>([]);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed">("idle");
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<TagRulesErrorCode | null>(null);
 
   useEffect(() => {
     if (rules !== null) setDraft(rules);
@@ -99,8 +100,9 @@ function TagSettings() {
       await save(normalized);
       setStatus("saved");
     } catch (cause) {
+      console.error("Could not save tag rules", cause);
       setStatus("failed");
-      setSaveError(cause instanceof Error ? cause.message : String(cause));
+      setSaveError(classifyTagRulesError(cause));
     }
   };
 
@@ -183,7 +185,7 @@ function TagSettings() {
         )}
         <span role="status" className="text-xs text-muted-foreground">
           {status === "saved" && !dirty ? S.tags.saved : null}
-          {status === "failed" ? <span className="text-destructive-text">{S.tags.saveError(saveError ?? "")}</span> : null}
+          {status === "failed" ? <span className="text-destructive-text">{S.tags.saveError(saveError ?? "unknown")}</span> : null}
         </span>
       </div>
     </div>

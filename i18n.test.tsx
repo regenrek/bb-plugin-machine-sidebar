@@ -1,9 +1,11 @@
+// @vitest-environment jsdom
 import { renderToStaticMarkup } from "react-dom/server";
+import { act, cleanup, render as mount, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TaskRow, WorkerWorkspace } from "./farcall-tasks";
 import { MachineThreadList } from "./app";
-import { LanguageProvider } from "./i18n";
+import { LanguageProvider, useStrings } from "./i18n";
 import type { FarcallRow } from "./farcall-contract";
 
 const sdk = vi.hoisted(() => ({ settings: undefined as Record<string, string | number | boolean> | undefined }));
@@ -39,9 +41,11 @@ const list = () => render(<MachineThreadList activeThreadId={null} activeProject
 
 beforeEach(() => {
   sdk.settings = undefined;
+  thread.indicator = "none";
+  thread.indicatorLabel = null;
   vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => undefined });
 });
-afterEach(() => { vi.unstubAllGlobals(); });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe("language setting", () => {
   it("renders english by default and without a stored value", () => {
@@ -59,7 +63,7 @@ describe("language setting", () => {
     expect(html).toContain('aria-label="Gespräche nach Maschine"');
     expect(html).toContain('aria-label="Gespräch archivieren"');
     expect(html).toContain('aria-label="Gesprächsaktionen"');
-    expect(html).toContain('title="feature/login (Worktree)"');
+    expect(html).toContain('title="feature/login (Git-Worktree)"');
     expect(html).toContain('aria-label="2 Unteragenten aktiv"');
     expect(html).not.toContain("Archive thread");
   });
@@ -71,7 +75,7 @@ describe("language setting", () => {
     expect(task).toContain("Codex · Modell unbekannt · Zeitüberschreitung");
     expect(task).not.toContain("Timed out");
     const workspace = render(<WorkerWorkspace task={{ ...row, workspace: { label: "w1", branch: "sol/w1", source: "environment" } }} />);
-    expect(workspace).toContain('aria-label="Worktree-Branch: sol/w1"');
+    expect(workspace).toContain('aria-label="Git-Worktree-Branch: sol/w1"');
     expect(workspace).not.toContain("Worktree branch");
   });
 
@@ -82,4 +86,72 @@ describe("language setting", () => {
     vi.stubGlobal("navigator", { language: "fr-FR" });
     expect(list()).toContain('aria-label="Threads by machine"');
   });
+
+  it.each([
+    ["waiting-for-input", "Thread needs user input", "Wartet auf deine Eingabe"],
+    ["queued-failed", "Queued message failed to send", "Nachricht konnte nicht gesendet werden"],
+    ["queued-waiting", "Queued message waiting to send", "Nachricht wartet auf das Senden"],
+  ])("translates the %s indicator from its code instead of the host label", (indicator, hostLabel, translated) => {
+    sdk.settings = { language: "de" };
+    thread.indicator = indicator;
+    Object.assign(thread, { indicatorLabel: hostLabel });
+    const html = list();
+    expect(html).toContain(`aria-label="${translated}"`);
+    expect(html).toContain(`title="${translated}"`);
+    expect(html).not.toContain(hostLabel);
+    sdk.settings = { language: "en" };
+    expect(list()).not.toContain(hostLabel);
+  });
+
+  it("re-resolves auto texts on languagechange and removes the listener on unmount", () => {
+    sdk.settings = { language: "auto" };
+    vi.stubGlobal("navigator", { language: "en-US" });
+    const subscribe = vi.spyOn(window, "addEventListener");
+    const unsubscribe = vi.spyOn(window, "removeEventListener");
+    const view = mount(<LanguageProvider><LanguageProbe /></LanguageProvider>);
+    expect(screen.getByText("Loading threads…")).toBeTruthy();
+    act(() => {
+      vi.stubGlobal("navigator", { language: "de-AT" });
+      window.dispatchEvent(new Event("languagechange"));
+    });
+    expect(screen.getByText("Gespräche werden geladen…")).toBeTruthy();
+    act(() => {
+      vi.stubGlobal("navigator", { language: "fr-FR" });
+      window.dispatchEvent(new Event("languagechange"));
+    });
+    expect(screen.getByText("Loading threads…")).toBeTruthy();
+    const listener = subscribe.mock.calls.find(([event]) => event === "languagechange")?.[1];
+    expect(listener).toBeTypeOf("function");
+    view.unmount();
+    expect(unsubscribe).toHaveBeenCalledWith("languagechange", listener);
+  });
+
+  it("only subscribes to languagechange in auto mode", () => {
+    sdk.settings = { language: "en" };
+    const subscribe = vi.spyOn(window, "addEventListener");
+    const unsubscribe = vi.spyOn(window, "removeEventListener");
+    const view = mount(<LanguageProvider><LanguageProbe /></LanguageProvider>);
+    expect(subscribe.mock.calls.filter(([event]) => event === "languagechange")).toHaveLength(0);
+    vi.stubGlobal("navigator", { language: "de-AT" });
+    sdk.settings = { language: "auto" };
+    view.rerender(<LanguageProvider><LanguageProbe /></LanguageProvider>);
+    expect(screen.getByText("Gespräche werden geladen…")).toBeTruthy();
+    const listener = subscribe.mock.calls.find(([event]) => event === "languagechange")?.[1];
+    expect(listener).toBeTypeOf("function");
+    sdk.settings = { language: "de" };
+    view.rerender(<LanguageProvider><LanguageProbe /></LanguageProvider>);
+    expect(unsubscribe).toHaveBeenCalledWith("languagechange", listener);
+    expect(screen.getByText("Gespräche werden geladen…")).toBeTruthy();
+  });
+
+  it("renders auto without window or navigator", () => {
+    sdk.settings = { language: "auto" };
+    vi.stubGlobal("window", undefined);
+    vi.stubGlobal("navigator", undefined);
+    expect(list()).toContain('aria-label="Threads by machine"');
+  });
 });
+
+function LanguageProbe() {
+  return <p>{useStrings().list.loading}</p>;
+}

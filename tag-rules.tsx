@@ -5,11 +5,12 @@ import type { ReactNode } from "react";
 import { useRealtime, useRpc } from "@get-bb/plugin-sdk/app";
 import type { rpcContract } from "./server";
 import { tagColorResolver, TAG_RULES_CHANGED, type TagRule } from "./tags";
+import { classifyTagRulesError, type TagRulesErrorCode } from "./tag-errors";
 
 export function useTagRules() {
   const rpc = useRpc<typeof rpcContract>();
   const [rules, setRules] = useState<TagRule[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<TagRulesErrorCode | null>(null);
 
   const refetch = useCallback(() => {
     rpc
@@ -18,7 +19,10 @@ export function useTagRules() {
         setRules(result.rules);
         setError(null);
       })
-      .catch((cause: unknown) => setError(cause instanceof Error ? cause.message : String(cause)));
+      .catch((cause: unknown) => {
+        console.error("Could not load tag rules", cause);
+        setError(classifyTagRulesError(cause));
+      });
   }, [rpc]);
 
   useEffect(refetch, [refetch]);

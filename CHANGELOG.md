@@ -8,7 +8,15 @@
 - Move the remaining hardcoded English texts into the string files, including the Farcall
   status labels, durations, tooltips and aria labels. Status outcome codes are unchanged.
 - Forks add their own keys to both languages instead of replacing `strings.ts`.
-- Bb-facing labels registered at load (the plugin's list name and the Title tags heading) stay English.
+- bb-facing labels registered at load (the plugin's list name and the Title tags heading) stay English.
+- Derive status dot labels and tooltips from stable codes in every language,
+  including distinct failed-send and queued-message labels; ignore host-language indicator labels.
+- Classify tag rule load and save failures and translate them in the current language;
+  retain raw SDK details only in console logs.
+- Update `auto` language texts on browser `languagechange` events without a reload.
+- Standardize German worktree, pin and activity-menu terminology and day abbreviations;
+  document the translation glossary. Keep the event-cursor exception in English.
+- Align package and lockfile versions with 0.4.0 and add status, tag-error and live-language regression tests.
 
 ## 0.3.0 — 2026-10-04
 

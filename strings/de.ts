@@ -1,13 +1,22 @@
 // German texts ("du", short). Typed as the English shape: a key missing here
-// fails the type check. Product names (Farcall, Worktree, Branch) stay as they are.
+// fails the type check. German terminology is documented in docs/glossary.md.
 import { forms, plural } from "./helpers.ts";
 import type { Strings } from "./en.ts";
 
+const tagErrors: Strings["tags"]["errors"] = {
+  network: "Verbindung zum Server fehlgeschlagen.",
+  timeout: "Zeitüberschreitung bei der Anfrage. Versuche es erneut.",
+  unavailable: "Das Plugin ist nicht verfügbar. Prüfe, ob es läuft.",
+  validation: "Der Server hat die Tag-Regeln abgelehnt.",
+  server: "Der Server konnte die Tag-Regeln nicht verarbeiten.",
+  unknown: "Ein unerwarteter Fehler ist aufgetreten.",
+};
+
 export const de: Strings = {
   workerWorkspace: {
-    branch: (branch: string) => `Worktree-Branch: ${branch}`,
+    branch: (branch: string) => `Git-Worktree-Branch: ${branch}`,
     folder: (name: string) => `Arbeitsordner: ${name} (aus dem Aufgabenpfad, Branch unbekannt)`,
-    detached: (name: string) => `Worktree: ${name} (kein Branch)`,
+    detached: (name: string) => `Git-Worktree: ${name} (kein Branch)`,
   },
   list: {
     title: "Maschine → Projekt",
@@ -30,7 +39,9 @@ export const de: Strings = {
     subThreadAttention: (kind) =>
       `Ein Untergespräch ${kind === "waiting" ? "wartet auf deine Eingabe" : kind === "failed" ? "ist fehlgeschlagen" : "ist fertig"}`,
     attention: { waiting: "Wartet auf deine Eingabe", failed: "Fehlgeschlagen", done: "Fertig" },
-    worktree: "Worktree",
+    queuedFailed: "Nachricht konnte nicht gesendet werden",
+    queuedWaiting: "Nachricht wartet auf das Senden",
+    worktree: "Git-Worktree",
     worktreeTitle: "Git-Worktree",
     activity: (count, one, many) => `${count} ${plural(count, one, many)} aktiv`,
   },
@@ -51,21 +62,21 @@ export const de: Strings = {
     titleInput: "Gesprächstitel",
     archive: "Archivieren",
     archiveThread: "Gespräch archivieren",
-    branchTitle: (branch, isWorktree) => (isWorktree ? `${branch} (Worktree)` : branch),
+    branchTitle: (branch, isWorktree) => (isWorktree ? `${branch} (Git-Worktree)` : branch),
     newThreadIn: (project, machine) => `Neues Gespräch in ${project} auf ${machine}`,
   },
   menu: {
     split: "In geteilter Ansicht öffnen",
     rename: "Umbenennen",
     pin: "Anpinnen",
-    unpin: "Lösen",
+    unpin: "Nicht mehr anpinnen",
     markRead: "Als gelesen markieren",
     markUnread: "Als ungelesen markieren",
-    markActive: "Aktiv markieren",
-    markInactive: "Inaktiv markieren",
-    markProjectActive: "Projekt aktiv markieren",
-    markProjectInactive: "Projekt inaktiv markieren",
-    markAllActive: "Alle aktiv markieren",
+    markActive: "Als aktiv markieren",
+    markInactive: "Als inaktiv markieren",
+    markProjectActive: "Projekt als aktiv markieren",
+    markProjectInactive: "Projekt als inaktiv markieren",
+    markAllActive: "Alle als aktiv markieren",
     archive: "Archivieren",
     delete: "Löschen…",
   },
@@ -92,14 +103,15 @@ export const de: Strings = {
       lessThanMinute: "<1 Min.",
       minutes: (minutes) => `${minutes} Min.`,
       hoursMinutes: (hours, minutes) => `${hours} Std. ${minutes} Min.`,
-      daysHours: (days, hours) => `${days} T. ${hours} Std.`,
+      daysHours: (days, hours) => `${days} Tg. ${hours} Std.`,
     },
   },
   tags: {
     sectionTitle: "Titel-Tags",
     sectionDescription: "Farben für [Tag]-Präfixe in Gesprächstiteln.",
     loading: "Tags werden geladen…",
-    loadError: (error) => `Tags konnten nicht geladen werden: ${error}`,
+    errors: tagErrors,
+    loadError: (error) => `Tags konnten nicht geladen werden: ${tagErrors[error]}`,
     tagName: "Tag-Name",
     introStart: "Beginne einen Gesprächstitel mit ",
     introExampleTag: "[Tag]",
@@ -114,7 +126,7 @@ export const de: Strings = {
     saving: "Wird gespeichert…",
     discard: "Verwerfen",
     saved: "Gespeichert. Offene Fenster werden sofort aktualisiert.",
-    saveError: (error) => `Speichern fehlgeschlagen: ${error}`,
+    saveError: (error) => `Speichern fehlgeschlagen: ${tagErrors[error]}`,
     remove: (tag) => `${tag || "Tag"} entfernen`,
     colorFor: (tag) => `Farbe für ${tag || "neuen Tag"}`,
     colors: {

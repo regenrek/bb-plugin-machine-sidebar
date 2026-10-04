@@ -132,6 +132,7 @@ function Dot({ kind, label }: { kind: Exclude<Attention, null>; label?: string }
     <span
       role={label ? "img" : undefined}
       aria-label={label}
+      title={label}
       aria-hidden={label ? undefined : true}
       className={cn("size-2 shrink-0 animate-pulse rounded-full", ATTENTION_DOT[kind])}
     />
@@ -166,14 +167,19 @@ function StatusGlyph({
   if (attention !== null) {
     const label =
       ownAttention === attention
-        ? (thread.indicatorLabel ?? S.status.attention[attention])
+        ? (attention === "failed" && thread.indicator === "queued-failed"
+          ? S.status.queuedFailed : S.status.attention[attention])
         : S.status.subThreadAttention(attention);
     return <Dot kind={attention} label={label} />;
   }
   if (isAgentWorking(thread)) return <Spinner label={S.status.agentWorking} />;
   if (hidden.some(isAgentWorking)) return <Spinner label={S.status.subThreadAgentWorking} />;
   if (thread.indicator === "queued-waiting") {
-    return <Icon name="Clock" fallback="Dot" className="size-3 shrink-0 text-muted-foreground" />;
+    return (
+      <span role="img" aria-label={S.status.queuedWaiting} title={S.status.queuedWaiting}>
+        <Icon name="Clock" fallback="Dot" className="size-3 shrink-0 text-muted-foreground" />
+      </span>
+    );
   }
   if (hasUnsubmittedDraft) {
     return (

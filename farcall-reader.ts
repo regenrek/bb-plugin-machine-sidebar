@@ -24,7 +24,7 @@ export function createFarcallReader(list: EventList) {
           if (!live()) return;
           if (events.length === 0) return;
           const sequence = Math.max(...events.map((event) => event.seq));
-          if (sequence <= current.sequence) throw new Error("BB-Ereigniscursor ist nicht fortgeschritten.");
+          if (sequence <= current.sequence) throw new Error("BB event cursor did not advance.");
           for (const event of events) current.projection.apply(event);
           current.sequence = sequence;
         }

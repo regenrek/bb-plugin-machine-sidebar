@@ -2,6 +2,16 @@
 // language must follow: `Strings` below is inferred from it, so a key missing
 // in `de.ts` fails the type check.
 import { forms, plural } from "./helpers.ts";
+import type { TagRulesErrorCode } from "../tag-errors.ts";
+
+const tagErrors = {
+  network: "Could not connect to the server.",
+  timeout: "The request timed out. Try again.",
+  unavailable: "The plugin is unavailable. Check that it is running.",
+  validation: "The server rejected the tag rules.",
+  server: "The server could not process the tag rules.",
+  unknown: "An unexpected error occurred.",
+} satisfies Record<TagRulesErrorCode, string>;
 
 export const en = {
   workerWorkspace: {
@@ -29,8 +39,10 @@ export const en = {
     subThreadAgentWorking: "A sub-thread's agent is working",
     subThreadAttention: (kind: "waiting" | "failed" | "done") =>
       `A sub-thread ${kind === "waiting" ? "needs your input" : kind === "failed" ? "failed" : "finished"}`,
-    /** Fallback when bb gives no label for a thread's own status dot. */
+    /** Labels derived from attention codes, independent of host-language text. */
     attention: { waiting: "Needs your input", failed: "Failed", done: "Finished" },
+    queuedFailed: "Message could not be sent",
+    queuedWaiting: "Message queued to send",
     worktree: "Worktree",
     worktreeTitle: "Git worktree",
     activity: (count: number, one: string, many: string) => `${count} ${plural(count, one, many)} running`,
@@ -101,7 +113,8 @@ export const en = {
     sectionTitle: "Title tags",
     sectionDescription: "Colors for [Tag] prefixes in thread titles.",
     loading: "Loading tags…",
-    loadError: (error: string) => `Could not load tags: ${error}`,
+    errors: tagErrors,
+    loadError: (error: TagRulesErrorCode) => `Could not load tags: ${tagErrors[error]}`,
     tagName: "Tag name",
     introStart: "Start a thread title with ",
     introExampleTag: "[Tag]",
@@ -116,7 +129,7 @@ export const en = {
     saving: "Saving…",
     discard: "Discard",
     saved: "Saved. Open windows update right away.",
-    saveError: (error: string) => `Could not save: ${error}`,
+    saveError: (error: TagRulesErrorCode) => `Could not save: ${tagErrors[error]}`,
     remove: (tag: string) => `Remove ${tag || "tag"}`,
     colorFor: (tag: string) => `Color for ${tag || "new tag"}`,
     colors: {

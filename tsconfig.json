@@ -47,6 +47,8 @@
     "farcall-refresh.ts",
     "farcall-refresh.test.ts",
     "strings.test.ts",
-    "i18n.test.tsx"
+    "i18n.test.tsx",
+    "tag-rules.test.tsx",
+    "tag-errors.test.ts"
   ]
 }

@@ -65,6 +65,7 @@ follows the browser language and falls back to English. The labels bb itself
 shows for this plugin (its name in Settings → Appearance and the Title tags
 heading) stay English. To add a language, create `strings/<code>.ts` typed as
 `Strings` and register it in `strings.ts`.
+See the [German terminology glossary](docs/glossary.md) when editing translations.
 
 ## Install
 
