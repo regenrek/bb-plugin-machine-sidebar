@@ -15,11 +15,13 @@ export function createFarcallReader(list: EventList) {
         entries.set(threadId, entry);
       }
       const current = entry;
+      const live = () => entries.get(threadId) === current;
       // Serialize reads for the same coordinator; unrelated coordinators remain independent.
       const load = async () => {
-        while (true) {
+        while (live()) {
           const events = await list({ threadId, afterSeq: String(current.sequence), order: "asc", limit: "100",
             types: ["item/started", "item/completed", "turn/completed", "system/thread/interrupted"] });
+          if (!live()) return;
           if (events.length === 0) return;
           const sequence = Math.max(...events.map((event) => event.seq));
           if (sequence <= current.sequence) throw new Error("BB-Ereigniscursor ist nicht fortgeschritten.");
@@ -30,7 +32,7 @@ export function createFarcallReader(list: EventList) {
       const pending = (current.pending ?? Promise.resolve()).catch(() => undefined).then(load);
       current.pending = pending;
       await pending;
-      return { tasks: current.projection.snapshot() };
+      return { tasks: live() ? current.projection.snapshot() : [] };
     },
   };
 }

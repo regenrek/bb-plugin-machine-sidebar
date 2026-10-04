@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type ComponentProps } from "react";
+import { useEffect, useId, useRef, useState, type ComponentProps } from "react";
 import {
   experimental_ProviderIcon as ProviderIcon,
   experimental_useProviders,
@@ -10,6 +10,7 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { HierarchyGuides } from "./hierarchy-guides";
 import { FARCALL_CHANGED, FARCALL_WORKSPACES_CHANGED, farcallChangedSchema, taskStatus, type FarcallRow, type TaskOutcome } from "./farcall-contract";
+import { createFarcallRefresh } from "./farcall-refresh";
 import { S } from "./strings";
 import type { rpcContract } from "./server";
 
@@ -18,27 +19,29 @@ function useFarcallTasks(threadId: string) {
   const connection = useRealtimeConnectionState();
   const [tasks, setTasks] = useState<FarcallRow[]>([]);
   const [error, setError] = useState(false);
-  const request = useRef(0);
-  const refresh = useCallback(() => {
-    const revision = ++request.current;
-    void rpc.call("farcall_tasks_get", { threadId }).then((result) => {
-      if (revision !== request.current) return;
-      setTasks(result.tasks);
-      setError(false);
-    }).catch(() => { if (revision === request.current) setError(true); });
+  const scheduler = useRef<ReturnType<typeof createFarcallRefresh> | null>(null);
+  const previousConnection = useRef(connection);
+  useEffect(() => {
+    const refresh = createFarcallRefresh(
+      () => rpc.call("farcall_tasks_get", { threadId }),
+      (next) => { setTasks(next); setError(false); },
+      () => setError(true),
+    );
+    scheduler.current = refresh;
+    refresh.start();
+    const focused = () => refresh.change("tasks");
+    window.addEventListener("focus", focused);
+    return () => { refresh.dispose(); scheduler.current = null; window.removeEventListener("focus", focused); };
   }, [rpc, threadId]);
   useEffect(() => {
-    refresh();
-    window.addEventListener("focus", refresh);
-    return () => { ++request.current; window.removeEventListener("focus", refresh); };
-  }, [refresh, connection]);
+    if (connection === "connected" && previousConnection.current !== "connected") scheduler.current?.change("tasks");
+    previousConnection.current = connection;
+  }, [connection]);
   useRealtime(FARCALL_CHANGED, (payload) => {
     const changed = farcallChangedSchema.safeParse(payload);
-    if (changed.success && changed.data.threadId === threadId) refresh();
+    if (changed.success && changed.data.threadId === threadId) scheduler.current?.change("tasks");
   });
-  useRealtime(FARCALL_WORKSPACES_CHANGED, () => {
-    if (tasks.some((task) => task.cwd)) refresh();
-  });
+  useRealtime(FARCALL_WORKSPACES_CHANGED, () => { scheduler.current?.change("workspace"); });
   return { tasks, error };
 }
 
@@ -132,7 +135,7 @@ export function WorkerWorkspace({ task }: { task: FarcallRow }) {
   return (
     <div title={description} aria-label={description}
       className="flex min-w-0 items-center gap-1 pb-0.5 pl-[26px] pr-1 text-[11px] leading-4 text-muted-foreground">
-      <Icon name="GitFork" fallback="GitBranch" aria-hidden className="size-3 shrink-0" />
+      <Icon name={workspace.source === "path" ? "Folder" : "GitFork"} fallback={workspace.source === "path" ? "Folder" : "GitBranch"} aria-hidden className="size-3 shrink-0" />
       <span className="min-w-0 truncate">{label}</span>
     </div>
   );

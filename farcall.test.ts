@@ -220,8 +220,9 @@ describe("Farcall SDK reader and backend", () => {
     const rows = (first as { tasks: Record<string, unknown>[] }).tasks;
     expect(rows.length).toBeGreaterThan(30);
     for (const row of rows) {
-      expect(Object.keys(row).filter((key) => key !== "cwd" && key !== "workspace").sort()).toEqual(["callState", "endedAt", "key", "provider", "requestedModel", "startedAt", "status", "task"]);
+      expect(Object.keys(row).filter((key) => key !== "workspace").sort()).toEqual(["callState", "endedAt", "hasCwd", "key", "provider", "requestedModel", "startedAt", "status", "task"]);
     }
+    expect(JSON.stringify(first)).not.toContain('"cwd"');
     // Result text, sessions and evidence remain in BB history, not each sidebar refresh.
     expect(JSON.stringify(first).length).toBeLessThan(JSON.stringify({ tasks: projectFarcallEvents(fixture) }).length);
     await host.harness.emitThreadEvent("experimental_thread.events", { thread: makeThreadResponse({ id: "coordinator" }), sequence: 10 });

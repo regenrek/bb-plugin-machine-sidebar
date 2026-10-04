@@ -41,8 +41,9 @@ several machines, for example a laptop and a remote Mac or Linux box.
   on under Settings → Installed plugins → Machine Sidebar → Show Farcall tasks.
   A second compact line shows the worker's worktree branch when its requested
   working directory matches a bb environment on the coordinator's machine.
-  Otherwise, a `worktrees/<name>` path shows the folder name; its tooltip says
-  **Working folder**, never claiming a branch. [Matching and cache behavior](docs/worker-workspaces.md).
+  Otherwise, a `worktrees/<name>` path shows a folder icon and name; its tooltip says
+  **Working folder**, never claiming a branch. Updates are debounced; working
+  directory paths stay on the server. [Matching and cache behavior](docs/worker-workspaces.md).
   Works well with [split-orchestrator](https://github.com/regenrek/split-orchestrator).
 - **Hierarchy guides (optional).** Thin vertical lines through nested threads
   and worker tasks, like an editor's file tree (Show hierarchy guides).

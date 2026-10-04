@@ -19,6 +19,8 @@ describe("worker workspace row", () => {
     const html = renderToStaticMarkup(<WorkerWorkspace task={{ ...task, workspace: { label: "w1", branch: null, source: "path" } }} />);
     expect(html).toContain("Working folder: w1 (from task path; branch unknown)");
     expect(html).not.toContain("Worktree branch");
+    expect(html).toContain('data-icon="Folder"');
+    expect(html).not.toContain('data-icon="GitFork"');
     expect(renderToStaticMarkup(<WorkerWorkspace task={{ ...task, workspace: { label: "w1", branch: null, source: "environment" } }} />)).toContain("branch unavailable");
     expect(renderToStaticMarkup(<WorkerWorkspace task={task} />)).toBe("");
   });

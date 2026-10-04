@@ -7,7 +7,7 @@ export type WorkspaceEnvironment = Pick<Environment, "id" | "hostId" | "path" | 
 type Workspace = FarcallRow["workspace"];
 
 /** Lexical paths only: no filesystem, Git, symlink or case-folding guesses. */
-function pathKey(value: string | null | undefined): string | null {
+export function pathKey(value: string | null | undefined): string | null {
   if (!value || value.length > 4096) return null;
   const path = value.replace(/\\/g, "/");
   if (!path.startsWith("/") && !/^[A-Za-z]:\//.test(path)) return null;
@@ -69,39 +69,71 @@ export function createWorkspaceIndex(environments: readonly WorkspaceEnvironment
   };
 }
 
-/** One shared lazy index; no timers. Events invalidate it, snapshots refresh it. */
+/** One active pagination, even across invalidations or feature disable/re-enable. */
 export function createWorkspaceCache(list: Sdk["environments"]["list"], now = Date.now) {
+  type Index = ReturnType<typeof createWorkspaceIndex>;
   let generation = 0;
-  let cached: { index: ReturnType<typeof createWorkspaceIndex> | null; expiresAt: number } | undefined;
-  let pending: Promise<ReturnType<typeof createWorkspaceIndex> | null> | undefined;
-  return {
-    invalidate() { generation++; cached = undefined; pending = undefined; },
-    async read(eventDriven: boolean) {
-      if (cached && cached.expiresAt > now()) return cached.index;
-      if (pending) return pending;
-      const revision = generation;
-      const load = async () => {
-        const environments: WorkspaceEnvironment[] = [];
-        try {
-          const limit = 200;
-          for (let offset = 0; ; offset += limit) {
-            const page = await list({ limit, offset });
-            environments.push(...page);
-            if (page.length < limit) break;
+  let lifecycle = 0;
+  let disposed = false;
+  let lastGood: Index | null = null;
+  let cachedGeneration = -1;
+  let expiresAt = 0;
+  let pending: { lifecycle: number; promise: Promise<Index | null> } | undefined;
+  const clear = () => {
+    lifecycle++;
+    generation++;
+    lastGood = null;
+    expiresAt = 0;
+    // Retain the in-flight promise until it settles: no overlapping loads.
+  };
+  const cache = {
+    invalidate() { generation++; },
+    clear,
+    dispose() { disposed = true; clear(); },
+    async read(eventDriven: boolean): Promise<Index | null> {
+      if (disposed) return null;
+      const epoch = lifecycle;
+      if (pending) {
+        if (pending.lifecycle === epoch) return pending.promise;
+        await pending.promise;
+        return disposed || epoch !== lifecycle ? null : cache.read(eventDriven);
+      }
+      if (cachedGeneration === generation && expiresAt > now()) return lastGood;
+      const current = () => !disposed && epoch === lifecycle;
+      const load = async (): Promise<Index | null> => {
+        // A busy host cannot keep one RPC pending indefinitely. Retain the last
+        // good index after three dirty passes; the next snapshot can try again.
+        for (let attempt = 0; attempt < 3 && current(); attempt++) {
+          const revision = generation;
+          const environments: WorkspaceEnvironment[] = [];
+          try {
+            for (let offset = 0; ; ) {
+              const page = await list({ limit: 200, offset });
+              if (!current()) return null;
+              if (revision !== generation) break;
+              if (page.length === 0) {
+                lastGood = createWorkspaceIndex(environments);
+                cachedGeneration = revision;
+                expiresAt = eventDriven ? Infinity : now() + 15_000;
+                return lastGood;
+              }
+              environments.push(...page);
+              offset += page.length; // A server may cap pages below the requested limit.
+            }
+          } catch {
+            if (!current()) return null;
+            if (revision !== generation) continue;
+            cachedGeneration = revision;
+            expiresAt = now() + 15_000;
+            return lastGood;
           }
-          const index = createWorkspaceIndex(environments);
-          if (revision === generation) cached = { index, expiresAt: eventDriven ? Infinity : now() + 15_000 };
-          return revision === generation ? index : null;
-        } catch {
-          // Metadata outages must not erase worker outcomes. Retry only on a later snapshot.
-          if (revision === generation) cached = { index: null, expiresAt: now() + 15_000 };
-          return null;
-        } finally {
-          if (revision === generation) pending = undefined;
         }
+        return current() ? lastGood : null;
       };
-      pending = load();
-      return pending;
+      const promise = Promise.resolve().then(load).finally(() => { pending = undefined; });
+      pending = { lifecycle: epoch, promise };
+      return promise;
     },
   };
+  return cache;
 }

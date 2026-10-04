@@ -29,8 +29,9 @@ export type FarcallTask = z.infer<typeof farcallTaskSchema>;
 /** Only send what the compact sidebar renders. Full evidence stays in BB history. */
 export const farcallRowSchema = farcallTaskSchema.pick({
   key: true, provider: true, requestedModel: true, status: true, callState: true,
-  task: true, startedAt: true, endedAt: true, cwd: true,
+  task: true, startedAt: true, endedAt: true,
 }).extend({
+  hasCwd: z.boolean().optional(),
   workspace: z.object({
     label: z.string().min(1).max(4096),
     branch: z.string().max(4096).nullable(),
