@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 — Unreleased
+## 0.3.0 — 2026-10-04
 
 - Bound workspace debouncing to 1.5 seconds under sustained events; recover once after 15 seconds when an index load fails or stays dirty.
 - Guard repeated/oversized pagination, refresh legacy rows with unknown workspace eligibility, and skip unchanged task-state updates.
