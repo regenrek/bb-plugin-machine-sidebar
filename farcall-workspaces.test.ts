@@ -425,6 +425,23 @@ describe("snapshot enrichment lifecycle and bursts", () => {
     expect(s.unsubscribe).toHaveBeenCalledTimes(2);
   });
 
+  it("keeps a scheduled recovery when a subscription retry fails", async () => {
+    vi.useFakeTimers();
+    const s = setup({ subscribeFails: () => true });
+    await plugin(s.host.bb);
+    await s.read();
+    await vi.advanceTimersByTimeAsync(50_000);
+    s.list.mockRejectedValueOnce(Error("offline"));
+    await s.read();
+    await vi.advanceTimersByTimeAsync(10_000);
+    await s.read();
+    expect(s.subscribe).toHaveBeenCalledTimes(2);
+    const before = s.host.harness.realtimeSignals.length;
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(s.host.harness.realtimeSignals).toHaveLength(before + 1);
+    await s.host.harness.dispose();
+  });
+
   it("preserves tasks on missing metadata and resolves the current coordinator host", async () => {
     const s = setup();
     await plugin(s.host.bb);

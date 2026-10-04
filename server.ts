@@ -111,12 +111,15 @@ export default async function plugin(bb: BbPluginApi) {
   const workspaceDebounce = createBoundedDebounce(() => {
     if (!disposed) publishWorkspaceChange();
   });
+  const dropSubscriptions = () => {
+    for (const unsubscribe of subscriptions) unsubscribe();
+    subscriptions = [];
+  };
   const stopWorkspaces = () => {
     workspaceDebounce.cancel();
     cancelRecovery();
     recoveryUsed = false;
-    for (const unsubscribe of subscriptions) unsubscribe();
-    subscriptions = [];
+    dropSubscriptions();
     nextSubscriptionAttempt = 0;
   };
   const observeWorkspaces = (epoch: number) => {
@@ -132,7 +135,8 @@ export default async function plugin(bb: BbPluginApi) {
         if (event.state === "connected") invalidate();
       } }));
     } catch {
-      stopWorkspaces();
+      // Only the partial subscriptions go; a scheduled recovery is still the sole signal.
+      dropSubscriptions();
       nextSubscriptionAttempt = Date.now() + 60_000;
       bb.log.warn("Environment notifications unavailable; retry on a snapshot after 60s. Workspace cache expires after 15s.");
     }
